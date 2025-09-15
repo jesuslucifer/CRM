@@ -1,0 +1,13 @@
+package com.example.repository;
+
+import com.example.model.Token;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface TokenRepository extends JpaRepository<Token, Long> {
+    Optional<Token> findByRefreshToken(String refreshToken);
+    List<Token> findAllByUserId(Long id);
+    Optional<Token> findByAccessToken(String accessToken);
+}
