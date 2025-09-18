@@ -1,9 +1,9 @@
 package com.example.controller;
 
-import com.example.dto.request.RefreshTokenRequest;
-import com.example.dto.request.SignInRequest;
-import com.example.dto.request.SignUpRequest;
-import com.example.dto.response.JwtResponse;
+import com.example.model.dto.request.RefreshTokenRequest;
+import com.example.model.dto.request.SignInRequest;
+import com.example.model.dto.request.SignUpRequest;
+import com.example.model.dto.response.JwtResponse;
 import com.example.model.Role;
 import com.example.model.User;
 import com.example.repository.UserRepository;
