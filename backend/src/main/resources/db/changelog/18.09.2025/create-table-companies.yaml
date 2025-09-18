@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-companies.yaml
+      author: jesuslucifer
+      changes:
+        - createTable:
+            tableName: companies
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: name
+                  type: NVARCHAR(255)
+              - column:
+                  name: user_creator_id
+                  type: BIGINT

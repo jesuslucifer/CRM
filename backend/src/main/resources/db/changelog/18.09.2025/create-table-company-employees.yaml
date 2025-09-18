@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-company-employees.yaml
+      author: jesuslucifer
+      changes:
+        - createTable:
+            tableName: company-employees
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: user_id
+                  type: BIGINT
+              - column:
+                  name: company_id
+                  type: BIGINT
+              - column:
+                  name: role
+                  type: NVARCHAR(30)
+              - column:
+                  name: status
+                  type: NVARCHAR(30)

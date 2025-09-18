@@ -1,15 +1,22 @@
 package com.example.service;
 
 import com.example.model.User;
+import com.example.model.dto.response.UserDto;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 public interface UserService {
     User save(User user);
     User create(User user);
-    User getByUsernameOrEmail(String username, String email);
+    User getByUsernameOrEmail(String usernameOrEmail);
     User getByUsername(String username);
-    UserDetailsService userDetailsService();
-    User getCurrentUser();
+    User getById(Long id);
+    List<UserDto> getAll(String username, Pageable pageable);
+    void updateAvatarUrl(Long id, MultipartFile file);
     UserDetails loadUserByUsername(String usernameOrEmail);
+    UserDetailsService userDetailsService();
 }

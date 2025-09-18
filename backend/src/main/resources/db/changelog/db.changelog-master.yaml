@@ -3,3 +3,11 @@ databaseChangeLog:
       file: db/changelog/08.09.2025/create-table-users.yaml
   - include:
       file: db/changelog/15.09.2025/create-table-tokens.yaml
+  - include:
+      file: db/changelog/18.09.2025/add-column-name-lastname-in-users.yaml
+  - include:
+      file: db/changelog/18.09.2025/create-table-companies.yaml
+  - include:
+      file: db/changelog/18.09.2025/create-table-company-employees.yaml
+  - include:
+      file: db/changelog/18.09.2025/drop-access-token-in-tokens.yaml

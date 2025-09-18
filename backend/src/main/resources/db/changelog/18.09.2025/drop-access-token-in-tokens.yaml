@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: drop-access-token-in-tokens.yaml
+      author: jesuslucifer
+      changes:
+        - dropColumn:
+            tableName: tokens
+            columns:
+              - column:
+                  name: access_token

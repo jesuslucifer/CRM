@@ -16,9 +16,6 @@ public class Token {
     @Column(name = "refresh_token")
     private String refreshToken;
 
-    @Column(name = "access_token")
-    private String accessToken;
-
     @Column(name = "available")
     private Boolean available = true;
 

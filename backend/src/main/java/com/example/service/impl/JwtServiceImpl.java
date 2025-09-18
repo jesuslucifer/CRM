@@ -31,14 +31,17 @@ public class JwtServiceImpl implements JwtService {
     @Value("${jwt.refresh_token_expiration}")
     private Long refreshTokenExpiration;
 
+    @Override
     public String generateAccessToken(User user) {
         return generateToken(user, accessTokenExpiration);
     }
 
+    @Override
     public String generateRefreshToken(User user) {
         return generateToken(user, refreshTokenExpiration);
     }
 
+    @Override
     public String generateToken(User user, Long expiration) {
         return Jwts.builder()
                 .subject(user.getUsername())
@@ -48,14 +51,14 @@ public class JwtServiceImpl implements JwtService {
                 .compact();
     }
 
+    @Override
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
 
-        boolean valid = tokenRepository.findByAccessToken(token).isPresent();
-
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token)) && valid;
+        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
     }
 
+    @Override
     public Boolean validateRefreshToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
 
@@ -64,6 +67,7 @@ public class JwtServiceImpl implements JwtService {
         return (username.equals(userDetails.getUsername()) && !isRefreshTokenExpired(token)) && valid;
     }
 
+    @Override
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }

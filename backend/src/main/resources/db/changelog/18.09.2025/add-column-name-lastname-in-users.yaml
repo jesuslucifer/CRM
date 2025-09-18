@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-column-name-lastname-in-users.yaml
+      author: jesuslucifer
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: name
+                  type: NVARCHAR(40)
+              - column:
+                  name: last_name
+                  type: NVARCHAR(40)

@@ -1,0 +1,102 @@
+package com.example.exception;
+
+import com.example.model.dto.response.ErrorResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+@ControllerAdvice
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+    @ExceptionHandler(AuthenticationFailedException.class)
+    public ResponseEntity<ErrorResponse> handleAuthenticationFailed() {
+        ErrorResponse errorResponse = new ErrorResponse(
+                "Ошибка авторизации",
+                HttpStatus.UNAUTHORIZED
+        );
+        return new ResponseEntity<>(errorResponse, errorResponse.getStatus());
+    }
+
+    @ExceptionHandler(UsernameAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleUsernameAlreadyExists() {
+        ErrorResponse errorResponse = new ErrorResponse(
+                "Имя пользователя уже занято",
+                HttpStatus.BAD_REQUEST
+        );
+        return new ResponseEntity<>(errorResponse, errorResponse.getStatus());
+    }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleEmailAlreadyExists() {
+        ErrorResponse errorResponse = new ErrorResponse(
+                "Электронная почта уже занята",
+                HttpStatus.BAD_REQUEST
+        );
+        return new ResponseEntity<>(errorResponse, errorResponse.getStatus());
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUsernameNotFound() {
+        ErrorResponse errorResponse = new ErrorResponse(
+                "Имя пользователя не найдено",
+                HttpStatus.NOT_FOUND
+        );
+        return new ResponseEntity<>(errorResponse, errorResponse.getStatus());
+    }
+
+    @ExceptionHandler(EmailNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleEmailNotFound() {
+        ErrorResponse errorResponse = new ErrorResponse(
+                "Электронная почта не найдена",
+                HttpStatus.NOT_FOUND
+        );
+        return new ResponseEntity<>(errorResponse, errorResponse.getStatus());
+    }
+
+    @ExceptionHandler(IdNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleIdNotFound() {
+        ErrorResponse errorResponse = new ErrorResponse(
+                "ID не найден",
+                HttpStatus.NOT_FOUND
+        );
+        return new ResponseEntity<>(errorResponse, errorResponse.getStatus());
+    }
+
+    @ExceptionHandler(UploadFileException.class)
+    public ResponseEntity<ErrorResponse> handleUploadFile() {
+        ErrorResponse errorResponse = new ErrorResponse(
+                "Ошибка загрузки файла",
+                HttpStatus.BAD_REQUEST
+        );
+        return new ResponseEntity<>(errorResponse, errorResponse.getStatus());
+    }
+
+    @ExceptionHandler(InvalidFileTypeException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidFileType() {
+        ErrorResponse errorResponse = new ErrorResponse(
+                "Недопустимый тип файла",
+                HttpStatus.BAD_REQUEST
+        );
+        return new ResponseEntity<>(errorResponse, errorResponse.getStatus());
+    }
+
+    @ExceptionHandler(UploadFileIsEmptyException.class)
+    public ResponseEntity<ErrorResponse> handleUploadFileIsEmpty() {
+        ErrorResponse errorResponse = new ErrorResponse(
+                "Файл пуст",
+                HttpStatus.BAD_REQUEST
+        );
+        return new ResponseEntity<>(errorResponse, errorResponse.getStatus());
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotFoundException() {
+        ErrorResponse errorResponse = new ErrorResponse(
+                "Пользователь не найден",
+                HttpStatus.NOT_FOUND
+        );
+        return new ResponseEntity<>(errorResponse, errorResponse.getStatus());
+    }
+}
