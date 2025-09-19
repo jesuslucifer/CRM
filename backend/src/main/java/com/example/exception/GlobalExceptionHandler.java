@@ -99,4 +99,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         );
         return new ResponseEntity<>(errorResponse, errorResponse.getStatus());
     }
+
+    @ExceptionHandler(CompanyNameAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleCompanyNameAlreadyExists() {
+        ErrorResponse errorResponse = new ErrorResponse(
+                "Компания с таким именем уже существует",
+                HttpStatus.BAD_REQUEST
+        );
+        return new ResponseEntity<>(errorResponse, errorResponse.getStatus());
+    }
+
+    @ExceptionHandler(CompanyNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleCompanyNotFound() {
+        ErrorResponse errorResponse = new ErrorResponse(
+                "Компания не найдена",
+                HttpStatus.NOT_FOUND
+        );
+        return new ResponseEntity<>(errorResponse, errorResponse.getStatus());
+    }
 }

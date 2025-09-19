@@ -9,9 +9,13 @@ databaseChangeLog:
               - column:
                   name: id
                   type: BIGINT
+                  autoIncrement: true
               - column:
                   name: name
                   type: NVARCHAR(255)
               - column:
                   name: user_creator_id
                   type: BIGINT
+              - column:
+                  name: avatar_url
+                  type: NVARCHAR(255)
