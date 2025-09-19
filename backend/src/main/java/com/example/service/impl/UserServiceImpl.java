@@ -101,6 +101,21 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
+    public User updateNameAndLastName(Long id, UserDto userDto) {
+        User user = getById(id);
+
+        if (userDto.getName() != null) {
+            user.setName(userDto.getName());
+        }
+
+        if (userDto.getLastName() != null) {
+            user.setLastName(userDto.getLastName());
+        }
+
+        return userRepository.save(user);
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
         if (usernameOrEmail.contains("@")) {
             return userRepository.findByEmail(usernameOrEmail)

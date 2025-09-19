@@ -50,4 +50,14 @@ public class UserController {
 
         return ResponseEntity.ok(userService.getAll(username, pageable));
     }
+
+    @PutMapping("/{id}/name")
+    public ResponseEntity<UserDto> updateNameAndLastName(
+            @PathVariable Long id,
+            @RequestBody UserDto userDto) {
+
+        userService.updateNameAndLastName(id, userDto);
+
+        return ResponseEntity.ok(new UserDto(userService.getById(id)));
+    }
 }

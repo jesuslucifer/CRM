@@ -19,4 +19,5 @@ public interface UserService {
     void updateAvatarUrl(Long id, MultipartFile file);
     UserDetails loadUserByUsername(String usernameOrEmail);
     UserDetailsService userDetailsService();
+    User updateNameAndLastName(Long id, UserDto userDto);
 }
