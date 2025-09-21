@@ -4,14 +4,15 @@ import DealsListPage from "./pages/deals/DealsListPage";
 import DealsKanbanPage from "./pages/deals/DealsKanbanPage";
 import DealDetailsPage from "./pages/deals/DealsDetailsPage";
 import LeadsListPage from "./pages/leadsList/LeadsListPage";
-import ContactsListPage from "./pages/contacts/contactsListPage";
 import SettingsPage from "./pages/settings/SettingsPage";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import { PrivateRoute, PublicRoute } from "./router/privateRoutes";
 import { PUBLIC_URL } from "./config/url.config";
-import SideBar from "./layout/sideBar";
 import { ToastContainer  } from 'react-toastify';
+import SideBar from "./layout/sideBar";
+import ProfilePage from "./pages/profile/profilePage";
+import ContactsListPage from "./pages/contacts/contactsListPage";
  
 
 export default function App() {
@@ -33,6 +34,7 @@ export default function App() {
             
             <Route element={<PrivateRoute />}>
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/profile" element={<ProfilePage />} />
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/deals" element={<DealsListPage />} />
               <Route path="/deals/kanban" element={<DealsKanbanPage />} />

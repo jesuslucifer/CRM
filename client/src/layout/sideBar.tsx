@@ -4,6 +4,9 @@ export default function SideBar() {
   return (
     <aside className="w-64 bg-white shadow-lg p-4">
         <nav className="space-y-2">
+          <Link to="/profile" className="block hover:underline">
+            Профиль
+          </Link>
           <Link to="/dashboard" className="block hover:underline">
             Dashboard
           </Link>

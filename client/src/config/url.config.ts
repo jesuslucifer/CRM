@@ -7,7 +7,6 @@ export const PUBLIC_URL = {
 	login: () => PUBLIC_URL.root('/login'),
 	register: () => PUBLIC_URL.root('/register'),
 	
-	explorer: (query = '') => PUBLIC_URL.root(`/explorer${query}`),
 
 	product: (id = '') => PUBLIC_URL.root(`/product/${id}`),
 	category: (id = '') => PUBLIC_URL.root(`/category/${id}`)

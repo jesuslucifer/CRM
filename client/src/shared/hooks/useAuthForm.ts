@@ -28,7 +28,7 @@ export function useAuthForm(isRegister: boolean) {
 
     onSuccess(data) {
       form.reset()
-        navigate("/dashboard")
+        navigate("/profile")
 
       // if (!isRegister && "accessToken" in data) {
       //   toast.success("Успешная авторизация")

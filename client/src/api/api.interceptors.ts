@@ -33,7 +33,7 @@ axiosWithAuth.interceptors.response.use(
     ) {
       originalRequest._isRetry = true;
       try {
-        await authService.refreshTokens();
+        await authService.refresh();
         return axiosWithAuth.request(originalRequest); // повторяем запрос
       } catch (err) {
         removeFromStorage();
