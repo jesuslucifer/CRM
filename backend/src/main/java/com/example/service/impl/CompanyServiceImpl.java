@@ -1,11 +1,12 @@
 package com.example.service.impl;
 
-import com.example.exception.CompanyNameAlreadyExistsException;
-import com.example.exception.CompanyNotFoundException;
-import com.example.exception.InvalidFileTypeException;
-import com.example.exception.UploadFileIsEmptyException;
+import com.example.exception.*;
 import com.example.model.Company;
+import com.example.model.EmployeeRole;
+import com.example.model.User;
+import com.example.repository.CompanyEmployeeRepository;
 import com.example.repository.CompanyRepository;
+import com.example.repository.UserRepository;
 import com.example.service.CompanyService;
 import com.example.service.LocalStorageService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class CompanyServiceImpl implements CompanyService {
     private final CompanyRepository companyRepository;
     private final LocalStorageService localStorageService;
+    private final UserRepository userRepository;
+    private final CompanyEmployeeRepository companyEmployeeRepository;
 
     @Override
     public Company save(Company company) {
@@ -57,5 +60,39 @@ public class CompanyServiceImpl implements CompanyService {
 
         company.setAvatarUrl(fileUrl);
         save(company);
+    }
+
+    @Override
+    public Company addEmployee(Long userId, Long companyId, EmployeeRole role) {
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(CompanyNotFoundException::new);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        if (companyEmployeeRepository.existsByCompanyIdAndUserId(companyId, userId)) {
+            throw new EmployeeAlreadyExistsInCompanyException();
+        }
+
+        company.addEmployee(user, role);
+
+        return companyRepository.save(company);
+    }
+
+    @Override
+    public Company removeEmployee(Long userId, Long companyId) {
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(CompanyNotFoundException::new);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        if (!companyEmployeeRepository.existsByCompanyIdAndUserId(companyId, userId)) {
+            throw new EmployeeNotFoundInCompanyException();
+        }
+
+        company.removeEmployee(user);
+
+        return companyRepository.save(company);
     }
 }

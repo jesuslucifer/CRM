@@ -44,6 +44,9 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Token> tokens;
 
+    @OneToMany(mappedBy = "userCreator", fetch = FetchType.EAGER)
+    private List<Company> companies;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;

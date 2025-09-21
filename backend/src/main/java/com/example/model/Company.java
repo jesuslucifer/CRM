@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Data
 @Builder
@@ -26,4 +29,16 @@ public class Company {
 
     @Column(name = "avatar_url")
     private String avatarUrl;
+
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<CompanyEmployee> employees =  new ArrayList<>();
+
+    public void addEmployee(User user, EmployeeRole role) {
+        employees.add(new CompanyEmployee(this, user, role));
+    }
+
+    public void removeEmployee(User user) {
+        employees.removeIf(employee -> employee.getUser().equals(user));
+    }
 }

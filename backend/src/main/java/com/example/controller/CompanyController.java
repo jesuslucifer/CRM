@@ -1,11 +1,15 @@
 package com.example.controller;
 
 import com.example.model.Company;
+import com.example.model.EmployeeRole;
+import com.example.model.User;
+import com.example.model.dto.request.CompanyEmployeeRequest;
 import com.example.model.dto.request.CreateCompanyRequest;
 import com.example.model.dto.response.CompanyDto;
 import com.example.model.dto.response.SuccessResponse;
 import com.example.security.SecurityUtil;
 import com.example.service.CompanyService;
+import com.example.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,14 +21,19 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class CompanyController {
     private final CompanyService companyService;
+    private final UserService userService;
 
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody CreateCompanyRequest request) {
+        User user = SecurityUtil.getCurrentUser();
+
         Company company = Company.builder()
                 .name(request.getName())
-                .userCreator(SecurityUtil.getCurrentUser())
+                .userCreator(user)
                 .avatarUrl("http://localhost:8080/uploads/avatars/default.jpg")
                 .build();
+
+        company.addEmployee(userService.getById(user.getId()), EmployeeRole.ADMIN);
 
         companyService.create(company);
 
@@ -46,5 +55,23 @@ public class CompanyController {
                 "Аватар обновлен",
                 HttpStatus.OK
         );
+    }
+
+    @PutMapping("/{companyId}/employees")
+    public ResponseEntity<?> addEmployee(@PathVariable Long companyId,
+                                         @RequestBody CompanyEmployeeRequest companyEmployeeRequest) {
+        companyService.addEmployee(companyEmployeeRequest.getEmployeeId(),
+                companyId,
+                companyEmployeeRequest.getEmployeeRole());
+
+        return ResponseEntity.ok(new CompanyDto(companyService.getById(companyId)));
+    }
+
+    @DeleteMapping("/{companyId}/{employeeId}/employees")
+    public ResponseEntity<?> removeEmployee(@PathVariable Long companyId,
+                                            @PathVariable Long employeeId) {
+        companyService.removeEmployee( employeeId, companyId);
+
+        return ResponseEntity.ok(new CompanyDto(companyService.getById(companyId)));
     }
 }

@@ -117,4 +117,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         );
         return new ResponseEntity<>(errorResponse, errorResponse.getStatus());
     }
+
+    @ExceptionHandler(EmployeeAlreadyExistsInCompanyException.class)
+    public ResponseEntity<ErrorResponse> handleEmployeeAlreadyExistsInCompany() {
+        ErrorResponse errorResponse = new ErrorResponse(
+                "Сотрудник уже находится в компании",
+                HttpStatus.BAD_REQUEST
+        );
+        return new ResponseEntity<>(errorResponse, errorResponse.getStatus());
+    }
+
+    @ExceptionHandler(EmployeeNotFoundInCompanyException.class)
+    public ResponseEntity<ErrorResponse> handleEmployeeNotFoundInCompanyException() {
+        ErrorResponse errorResponse = new ErrorResponse(
+                "Сотрудника нет в компании",
+                HttpStatus.BAD_REQUEST
+        );
+        return new ResponseEntity<>(errorResponse, errorResponse.getStatus());
+    }
 }
