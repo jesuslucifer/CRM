@@ -4,7 +4,9 @@ import com.example.exception.*;
 import com.example.model.User;
 import com.example.model.dto.response.UserDto;
 import com.example.repository.UserRepository;
+import com.example.service.EmailService;
 import com.example.service.LocalStorageService;
+import com.example.service.PasswordResetTokenService;
 import com.example.service.UserService;
 import com.example.specification.UserSpecification;
 import lombok.RequiredArgsConstructor;
@@ -12,10 +14,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,6 +27,9 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserDetailsService, UserService {
     private final UserRepository userRepository;
     private final LocalStorageService localStorageService;
+    private final PasswordResetTokenService passwordResetTokenService;
+    private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public User save(User user) {
@@ -112,6 +119,17 @@ public class UserServiceImpl implements UserDetailsService, UserService {
             user.setLastName(userDto.getLastName());
         }
 
+        return userRepository.save(user);
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public User changePassword(User user, String newPassword) {
+        user.setPassword(passwordEncoder.encode(newPassword));
         return userRepository.save(user);
     }
 

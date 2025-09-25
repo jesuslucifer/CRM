@@ -11,3 +11,5 @@ databaseChangeLog:
       file: db/changelog/18.09.2025/create-table-company-employees.yaml
   - include:
       file: db/changelog/18.09.2025/drop-access-token-in-tokens.yaml
+  - include:
+      file: db/changelog/23.09.2025/create-table-password-reset-token.yaml
