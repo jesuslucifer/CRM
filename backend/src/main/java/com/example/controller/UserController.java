@@ -2,8 +2,9 @@ package com.example.controller;
 
 import com.example.model.PasswordResetToken;
 import com.example.model.User;
-import com.example.model.dto.request.EmailRequest;
+import com.example.model.dto.request.EmailPasswordUsernameRequest;
 import com.example.model.dto.request.PasswordRequest;
+import com.example.model.dto.response.ErrorResponse;
 import com.example.model.dto.response.SuccessResponse;
 import com.example.model.dto.response.UserDto;
 import com.example.security.SecurityUtil;
@@ -73,7 +74,7 @@ public class UserController {
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<?> forgotPassword(@RequestBody EmailRequest email, HttpServletRequest request) {
+    public ResponseEntity<?> forgotPassword(@RequestBody EmailPasswordUsernameRequest email, HttpServletRequest request) {
         try {
             Optional<User> userOptional = userService.findByEmail(email.getEmail());
 
@@ -92,12 +93,34 @@ public class UserController {
                     HttpStatus.OK
             ));
         } catch (Exception e) {
-            return ResponseEntity.ok(new SuccessResponse(
+            return ResponseEntity.ok(new ErrorResponse(
                     "Error",
                     HttpStatus.BAD_REQUEST
             ));
         }
+    }
 
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(HttpServletRequest request) {
+        try {
+            User user = userService.getById(SecurityUtil.getCurrentUser().getId());
+
+            passwordResetTokenService.deletePasswordResetTokenByUser(user);
+
+            PasswordResetToken passwordResetToken = passwordResetTokenService.create(user);
+
+            emailService.sendPasswordResetToken(user.getEmail(), getAppUrl(request), user, passwordResetToken.getToken());
+
+            return ResponseEntity.ok(new SuccessResponse(
+                    "Инструкция по смене пароля отправлена на ваш email",
+                    HttpStatus.OK
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.ok(new ErrorResponse(
+                    "Error",
+                    HttpStatus.BAD_REQUEST
+            ));
+        }
     }
 
     @PostMapping("/reset-password")
@@ -106,13 +129,13 @@ public class UserController {
             PasswordResetToken passwordResetToken = passwordResetTokenService.getPasswordResetToken(token);
 
             if (passwordResetToken.isExpired()) {
-                return ResponseEntity.ok(new SuccessResponse(
+                return ResponseEntity.ok(new ErrorResponse(
                         "Токен истек",
                         HttpStatus.BAD_REQUEST
                 ));
             }
 
-            userService.changePassword(passwordResetToken.getUser(), password.getNewPassword());
+            userService.changePassword(passwordResetToken.getUser(), password.getPassword());
 
             passwordResetTokenService.deletePasswordResetToken(token);
 
@@ -121,11 +144,21 @@ public class UserController {
                     HttpStatus.OK
             ));
         } catch (Exception e) {
-            return ResponseEntity.ok(new SuccessResponse(
+            return ResponseEntity.ok(new ErrorResponse(
                     "Error",
                     HttpStatus.BAD_REQUEST
             ));
         }
+    }
+
+    @PostMapping("/change-email")
+    public ResponseEntity<?> changeEmail(@RequestBody EmailPasswordUsernameRequest request) {
+        User user = userService.changeEmail(
+                SecurityUtil.getCurrentUser().getId(),
+                request.getEmail(),
+                request.getPassword());
+
+        return ResponseEntity.ok(new UserDto(user));
     }
 
     private String getAppUrl(HttpServletRequest request) {

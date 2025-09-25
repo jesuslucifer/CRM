@@ -4,9 +4,7 @@ import com.example.exception.*;
 import com.example.model.User;
 import com.example.model.dto.response.UserDto;
 import com.example.repository.UserRepository;
-import com.example.service.EmailService;
 import com.example.service.LocalStorageService;
-import com.example.service.PasswordResetTokenService;
 import com.example.service.UserService;
 import com.example.specification.UserSpecification;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +25,6 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserDetailsService, UserService {
     private final UserRepository userRepository;
     private final LocalStorageService localStorageService;
-    private final PasswordResetTokenService passwordResetTokenService;
-    private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -130,6 +126,23 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public User changePassword(User user, String newPassword) {
         user.setPassword(passwordEncoder.encode(newPassword));
+        return userRepository.save(user);
+    }
+
+    @Override
+    public User changeEmail(Long id, String newEmail, String password) {
+        User user = getById(id);
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new WrongPasswordException();
+        }
+
+        if (userRepository.existsByEmail(newEmail)) {
+            throw new EmailAlreadyExistsException();
+        }
+
+        user.setEmail(newEmail);
+
         return userRepository.save(user);
     }
 

@@ -23,4 +23,5 @@ public interface UserService {
     User updateNameAndLastName(Long id, UserDto userDto);
     Optional<User> findByEmail(String email);
     User changePassword(User user, String newPassword);
+    User changeEmail(Long id, String newEmail, String password);
 }
