@@ -8,9 +8,7 @@ import com.example.model.dto.response.ErrorResponse;
 import com.example.model.dto.response.SuccessResponse;
 import com.example.model.dto.response.UserDto;
 import com.example.security.SecurityUtil;
-import com.example.service.EmailService;
-import com.example.service.PasswordResetTokenService;
-import com.example.service.UserService;
+import com.example.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +28,8 @@ public class UserController {
     private final UserService userService;
     private final PasswordResetTokenService passwordResetTokenService;
     private final EmailService emailService;
+    private final TokenService tokenService;
+    private final JwtService jwtService;
 
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser() {
@@ -134,10 +134,13 @@ public class UserController {
                         HttpStatus.BAD_REQUEST
                 ));
             }
+            User user = passwordResetToken.getUser();
 
-            userService.changePassword(passwordResetToken.getUser(), password.getPassword());
+            userService.changePassword(user, password.getPassword());
 
             passwordResetTokenService.deletePasswordResetToken(token);
+
+            tokenService.removeToken(user);
 
             return ResponseEntity.ok(new SuccessResponse(
                     "Пароль изменен",
