@@ -93,7 +93,7 @@ public class UserController {
                     HttpStatus.OK
             ));
         } catch (Exception e) {
-            return ResponseEntity.ok(new ErrorResponse(
+            return ResponseEntity.badRequest().body(new ErrorResponse(
                     "Error",
                     HttpStatus.BAD_REQUEST
             ));
@@ -101,23 +101,24 @@ public class UserController {
     }
 
     @PostMapping("/change-password")
-    public ResponseEntity<?> changePassword(HttpServletRequest request) {
+    public ResponseEntity<?> changePassword(@RequestBody PasswordRequest passwordRequest) {
         try {
             User user = userService.getById(SecurityUtil.getCurrentUser().getId());
 
-            passwordResetTokenService.deletePasswordResetTokenByUser(user);
+            userService.changePasswordWithConfirmPassword(user,
+                    passwordRequest.getNewPassword(),
+                    passwordRequest.getCurrentPassword());
 
-            PasswordResetToken passwordResetToken = passwordResetTokenService.create(user);
-
-            emailService.sendPasswordResetToken(user.getEmail(), getAppUrl(request), user, passwordResetToken.getToken());
+            tokenService.removeToken(user);
 
             return ResponseEntity.ok(new SuccessResponse(
-                    "Инструкция по смене пароля отправлена на ваш email",
+                    "Пароль изменен",
                     HttpStatus.OK
             ));
         } catch (Exception e) {
-            return ResponseEntity.ok(new ErrorResponse(
-                    "Error",
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorResponse(
+                    e.getMessage(),
                     HttpStatus.BAD_REQUEST
             ));
         }
@@ -129,14 +130,14 @@ public class UserController {
             PasswordResetToken passwordResetToken = passwordResetTokenService.getPasswordResetToken(token);
 
             if (passwordResetToken.isExpired()) {
-                return ResponseEntity.ok(new ErrorResponse(
+                return ResponseEntity.badRequest().body(new ErrorResponse(
                         "Токен истек",
                         HttpStatus.BAD_REQUEST
                 ));
             }
             User user = passwordResetToken.getUser();
 
-            userService.changePassword(user, password.getPassword());
+            userService.changePassword(user, password.getCurrentPassword());
 
             passwordResetTokenService.deletePasswordResetToken(token);
 
@@ -147,7 +148,7 @@ public class UserController {
                     HttpStatus.OK
             ));
         } catch (Exception e) {
-            return ResponseEntity.ok(new ErrorResponse(
+            return ResponseEntity.badRequest().body(new ErrorResponse(
                     "Error",
                     HttpStatus.BAD_REQUEST
             ));

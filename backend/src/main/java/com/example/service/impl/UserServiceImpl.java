@@ -8,6 +8,7 @@ import com.example.service.LocalStorageService;
 import com.example.service.UserService;
 import com.example.specification.UserSpecification;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserDetailsService, UserService {
@@ -142,6 +144,23 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         }
 
         user.setEmail(newEmail);
+
+        return userRepository.save(user);
+    }
+
+    @Override
+    public User changePasswordWithConfirmPassword(User user, String newPassword, String confirmPassword) {
+        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+            log.info("perv");
+            throw new WrongPasswordException();
+        }
+
+        if (!passwordEncoder.matches(confirmPassword, user.getPassword())) {
+            log.info("vtor");
+            throw new WrongPasswordException();
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
 
         return userRepository.save(user);
     }

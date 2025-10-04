@@ -24,4 +24,5 @@ public interface UserService {
     Optional<User> findByEmail(String email);
     User changePassword(User user, String newPassword);
     User changeEmail(Long id, String newEmail, String password);
+    User changePasswordWithConfirmPassword(User user, String newPassword, String confirmPassword);
 }
