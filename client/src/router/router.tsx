@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from "react-router"
+import { createBrowserRouter, Navigate, Outlet } from "react-router"
 import { getAccessToken } from "@/service/auth-token.service"
 
 
@@ -20,6 +20,7 @@ import { PrivateRoute } from "./privateRoutes"
 import CompanyLayout from "@/layout/CompanyLayout"
 import CompanyPage from "@/pages/company/CompanyPage"
 import CompanyList from "@/pages/company/CompanyListPage"
+import CompanyEmployeesPage from "@/pages/employees/CompanyEmployeesPage"
 
 function requireAuth() {
     const token = getAccessToken()
@@ -66,12 +67,20 @@ export const router = createBrowserRouter([
                     { index: true, element: <Navigate to="dashboard" replace /> },
                     { path: "company", element: <CompanyPage /> },
                     { path: "dashboard", element: <DashboardPage /> },
-                    { path: "deals", element: <DealsListPage /> },
-                    { path: "deals/kanban", element: <DealsKanbanPage /> },
-                    { path: "deals/:id", element: <DealDetailsPage /> },
-                    { path: "leads", element: <LeadsListPage /> },
-                    { path: "contacts", element: <ContactsListPage /> },
+                    {
+                        path: "crm",
 
+                        children: [
+                            { index: true, element: <Navigate to="deals" replace /> },
+                            { path: "deals", element: <DealsListPage /> },
+                            { path: "kanban", element: <DealsKanbanPage /> },
+                            { path: "deals/:id", element: <DealDetailsPage /> },
+                            { path: "leads", element: <LeadsListPage /> },
+                            { path: "contacts", element: <ContactsListPage /> },
+
+                        ]
+                    },
+                    { path: "employees", element: <CompanyEmployeesPage /> },
                     { path: "profile", element: <ProfilePage /> },
                     { path: "settings", element: <SettingsPage /> },
 

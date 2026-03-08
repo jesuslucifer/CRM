@@ -16,7 +16,7 @@ export default function DashboardPage() {
     { id: 2, name: "CRM Startup", role: "Сотрудник" },
   ]
 
-  const company = useGetCompanyById(1)
+  const { data: company } = useGetCompanyById(1)
   // const companieses = useGetAllCompany()
   // useEffect(() => {
   //   console.log(company?.employees[0].role);

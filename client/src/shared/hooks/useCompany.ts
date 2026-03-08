@@ -1,24 +1,86 @@
-import { CompanyService, type ICreateCompany  } from "@/service/company.service";
+import { useWorkspace } from "@/features/workspace/workspace.hook";
+import { CompanyService, type ICreateEmployee } from "@/service/company.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
- 
+import { toast } from "react-toastify";
+
 
 export function useCreateCompany() {
-    const qc = useQueryClient();
-    return useMutation({
-        mutationFn: (payload: ICreateCompany) => CompanyService.createCompany(payload),
-         onSuccess: () => qc.invalidateQueries({ queryKey: ["company", "create_company"] }),
-})}
 
-export function useGetAllCompany(){
-return useQuery({
-queryKey:['company','company-list'],
-queryFn:() =>  CompanyService.getCompanyList()
-})
+    const qc = useQueryClient()
+
+    return useMutation({
+        mutationFn: CompanyService.createCompany,
+
+        onSuccess: () => {
+            qc.invalidateQueries({ queryKey: ["company", "list"] })
+        }
+    })
+
 }
-export function useGetCompanyById(id: number){
-const {data} =  useQuery({
-    queryKey:['company','company-list'],
-    queryFn:() =>  CompanyService.getCompanyById(id)
-})
-return data
+export function useGetAllCompany() {
+
+    return useQuery({
+        queryKey: ['company', 'list'],
+        queryFn: CompanyService.getCompanyList,
+    })
+
+}
+export function useGetCompanyById(id: number) {
+
+    return useQuery({
+        queryKey: ["company", id],
+        queryFn: () => CompanyService.getCompanyById(id),
+        enabled: !!id
+    })
+
+}
+export function useCreateCompanyEmployee(companyId: number) {
+
+    const qc = useQueryClient()
+
+    return useMutation({
+        mutationFn: (payload: ICreateEmployee) =>
+            CompanyService.createCompanyEmployee(companyId, payload),
+
+        onSuccess: () => {
+            qc.invalidateQueries({ queryKey: ["company", companyId] });
+            toast.success("Сотрудник добавлен в компанию")
+        },
+        onError: (error: any) => {
+            toast.error(error?.message || "Ошибка при добавлении сотрудника в компанию")
+        }
+    })
+
+}
+export function useDeleteCompanyEmployee(
+    companyId: number,
+    employeeId: number
+) {
+
+    const qc = useQueryClient()
+
+    return useMutation({
+        mutationFn: () =>
+            CompanyService.deleteCompanyEmployee(companyId, employeeId),
+
+        onSuccess: () => {
+            qc.invalidateQueries({ queryKey: ["company", companyId] });
+            toast.success("Сотрудник удален из компании")
+        },
+        onError: (error: any) => {
+            toast.error(error?.message || "Ошибка при удалении сотрудника из компании")
+        }
+    })
+
+}
+export function useCurrentCompany() {
+
+    const { companyId } = useWorkspace()
+
+    return useQuery({
+        queryKey: ["company", companyId],
+        queryFn: () => CompanyService.getCompanyById(companyId!),
+        enabled: !!companyId
+    })
+
 }

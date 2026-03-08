@@ -11,8 +11,8 @@ export default function CompanyListPage() {
         { id: 2, name: "CRM Startup", role: "Сотрудник" },
     ]
 
-    const company = useGetCompanyById(1)
-    const companieses = useGetAllCompany()
+    const { data: company } = useGetCompanyById(1)
+    const { data: company2 } = useGetCompanyById(3)
     return (
         <>
             {/* Компании */}
@@ -49,6 +49,23 @@ export default function CompanyListPage() {
                             <p className="text-sm text-slate-500">{company?.employees[0].role}</p>
                             <p className="text-sm text-slate-500">{company?.id}</p>
                             <NavLink to={`/company/${company?.id}/company`} className="text-indigo-600 hover:underline">
+                                Перейти в компанию
+                            </NavLink>
+                        </CardContent>
+                    </Card>
+
+                </div>
+                <div className="grid md:grid-cols-2 gap-6">
+
+                    <Card
+                        key={company2?.id}
+                        className="rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:scale-[1.02] transition"
+                    >
+                        <CardContent className="p-6 space-y-2">
+                            <h3 className="font-semibold text-lg">{company2?.name}</h3>
+                            <p className="text-sm text-slate-500">{company2?.employees[0].role}</p>
+                            <p className="text-sm text-slate-500">{company2?.id}</p>
+                            <NavLink to={`/company/${company2?.id}/company`} className="text-indigo-600 hover:underline">
                                 Перейти в компанию
                             </NavLink>
                         </CardContent>

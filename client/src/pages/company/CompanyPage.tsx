@@ -1,12 +1,11 @@
-import { useGetCompanyById } from "@/shared/hooks/useCompany"
+import { useCurrentCompany, useGetCompanyById } from "@/shared/hooks/useCompany"
 import { useMemo } from "react"
 import { useParams } from "react-router"
 import { Building2, MapPin, Phone, Mail, Globe } from "lucide-react"
 
 export default function CompanyPage() {
-    const { id } = useParams()
-    const companyId = useMemo(() => Number(id), [id])
-    const company = useGetCompanyById(companyId)
+
+    const { data: company } = useCurrentCompany()
 
     return (
         <div className="space-y-8">

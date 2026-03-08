@@ -26,7 +26,6 @@ export default function CompanyHeader() {
     >
       <div className="max-w-[1600px] mx-auto px-8 h-20 flex items-center justify-between">
 
-        {/* LEFT: Logo */}
         <div className="flex items-center gap-8">
           <div>
             <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-500 bg-clip-text text-transparent">
@@ -34,15 +33,15 @@ export default function CompanyHeader() {
             </h1>
           </div>
 
-          {/* Navigation */}
           <nav className="hidden xl:flex items-center gap-2">
             {[
-              { to: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-              { to: "company", label: "О компании", icon: Building2 },
-              { to: "deals", label: "Сделка", icon: Handshake },
-              { to: "deals/kanban", label: "Kanban", icon: KanbanSquare },
-              { to: "leads", label: "Лиды", icon: Users },
-              { to: "contacts", label: "Контакты", icon: Contact },
+              // { to: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+              // { to: "company", label: "О компании", icon: Building2 },
+              // { to: "employees", label: "Сотрудники", icon: Users },
+              { to: "crm/deals", label: "Сделка", icon: Handshake },
+              { to: "crm/kanban", label: "Kanban", icon: KanbanSquare },
+              { to: "crm/leads", label: "Лиды", icon: Users },
+              { to: "crm/contacts", label: "Контакты", icon: Contact },
             ].map(({ to, label, icon: Icon }) => (
               <NavLink
                 key={to}
@@ -65,7 +64,6 @@ export default function CompanyHeader() {
           </nav>
         </div>
 
-        {/* CENTER: Search */}
         <div className="hidden md:block w-96">
           <Input
             placeholder="Поиск объектов, сделок, клиентов..."
@@ -81,16 +79,13 @@ export default function CompanyHeader() {
           />
         </div>
 
-        {/* RIGHT: Actions */}
         <div className="flex items-center gap-4">
 
-          {/* Notifications */}
           <button className="relative p-2 rounded-xl hover:bg-slate-100 transition">
             <Bell size={18} className="text-slate-600" />
             <span className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-500 rounded-full" />
           </button>
 
-          {/* Profile */}
           <NavLink
             to="profile"
             className={({ isActive }) =>
@@ -108,7 +103,6 @@ export default function CompanyHeader() {
             Профиль
           </NavLink>
 
-          {/* Settings */}
           <NavLink
             to="settings"
             className={({ isActive }) =>

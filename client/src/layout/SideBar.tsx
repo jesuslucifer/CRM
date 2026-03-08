@@ -9,10 +9,8 @@ import {
   Contact,
 } from "lucide-react"
 import { Input } from "@/components/ui/input"
-type SidebarProps = {
-  toggleShow: () => void
-}
-export default function SideBar({ toggleShow }: SidebarProps) {
+
+export default function SideBar() {
   return (
     <aside className="w-72 h-screen sticky top-0 
       bg-gradient-to-b from-white via-indigo-50/40 to-emerald-50/40
@@ -33,7 +31,7 @@ export default function SideBar({ toggleShow }: SidebarProps) {
         </div>
         <div>
           <button
-            onClick={toggleShow}
+
             className="absolute top-4 right-4 p-2 rounded-md bg-white/70 shadow-md hover:bg-white/90 transition"
           >
             <LayoutDashboard size={18} />

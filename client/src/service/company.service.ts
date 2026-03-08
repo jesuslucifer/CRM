@@ -12,6 +12,10 @@ export interface IEmployees {
  user: IUser
     role: string
 }
+export interface ICreateEmployee {
+    employeeId: number;
+    role: string
+}
 
 export interface ICompanyById {
     id:  number;
@@ -31,6 +35,14 @@ export const CompanyService = {
     },
     async getCompanyById(id: number) {
         const {data} = await axiosWithAuth.get<ICompanyById>(API_URL + `/${id}`);
+        return data;
+    },
+     async createCompanyEmployee(id: number, payload: ICreateEmployee) {
+        const {data} = await axiosWithAuth.put<ICreateEmployee>(API_URL + `/${id}/employees`, payload);
+        return data;
+    },
+    async deleteCompanyEmployee(companyId: number, employeeId: number) {
+        const {data} = await axiosWithAuth.delete(API_URL + `/${companyId}/${employeeId}employees`);
         return data;
     }
 }
