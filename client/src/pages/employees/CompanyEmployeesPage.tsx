@@ -42,23 +42,19 @@ import { useParams } from "react-router"
 
 
 export default function CompanyEmployeesPage() {
-    // const { companyId } = useParams()
-    // const company_id = useMemo(() => Number(companyId), [companyId])
     const { data: currentCompany } = useCurrentCompany()
-    const { data: company } = useGetCompanyById(currentCompany?.id!)
-    const company_id = company?.id!
+    const company_id = currentCompany?.id!
     const form = useForm<ICreateEmployee>({
         mode: "onChange",
     })
-    const { mutate: deleteEmployee } = useDeleteCompanyEmployee(company_id, 0)
     const [search, setSearch] = useState("")
     const [selectedEmployee, setSelectedEmployee] = useState<IEmployees | null>(null)
+    const { mutate: deleteEmployee } = useDeleteCompanyEmployee(company_id)
+
     const [dialogOpen, setDialogOpen] = useState(false)
     const { mutate: createEmployee } = useCreateCompanyEmployee(company_id)
-    const employees =
-        company?.employees.filter((emp) =>
-            emp.user.username.toLowerCase().includes(search.toLowerCase())
-        ) || []
+    const employees = currentCompany?.employees
+    if (employees?.length === 0) return <div>Нет Сотрудников</div>
 
     return (
         <div className="p-8 space-y-6">
@@ -93,12 +89,12 @@ export default function CompanyEmployeesPage() {
 
                                     <FormField
                                         control={form.control}
-                                        name="employeeId"
+                                        name="username"
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>Имя пользователя</FormLabel>
                                                 <FormControl>
-                                                    <Input placeholder="employeeId"    {...field} value={field.value || ''} />
+                                                    <Input placeholder="username"    {...field} value={field.value || ''} />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -152,31 +148,32 @@ export default function CompanyEmployeesPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
-                {employees.map((employee) => {
+                {employees?.map((employee) => {
 
-                    const user = employee.user
+                    // const user = employee?.user
+                    // console.log(employee);
 
                     return (
-                        <Card key={user.id} className="hover:shadow-md transition">
+                        <Card key={employee?.id} className="hover:shadow-md transition">
 
                             <CardHeader className="flex flex-row items-center justify-between">
 
                                 <div className="flex items-center gap-3">
 
                                     <Avatar>
-                                        <AvatarImage src={user.avatarUrl} />
+                                        <AvatarImage />
                                         <AvatarFallback>
-                                            {user.username.slice(0, 2).toUpperCase()}
+                                            {employee?.username.slice(0, 2).toUpperCase()}
                                         </AvatarFallback>
                                     </Avatar>
 
                                     <div>
                                         <CardTitle className="text-base">
-                                            {user.name || user.username}
+                                            {employee?.username}
                                         </CardTitle>
 
                                         <p className="text-xs text-slate-500">
-                                            {user.email}
+                                            {employee?.email}
                                         </p>
                                     </div>
 
@@ -204,7 +201,7 @@ export default function CompanyEmployeesPage() {
                                             Изменить
                                         </DropdownMenuItem>
 
-                                        <DropdownMenuItem className="text-red-500">
+                                        <DropdownMenuItem onClick={() => deleteEmployee(employee.id)} className="text-red-500">
                                             <Trash size={14} className="mr-2" />
                                             Удалить
                                         </DropdownMenuItem>
@@ -222,7 +219,7 @@ export default function CompanyEmployeesPage() {
                                 </Badge>
 
                                 <span className="text-xs text-slate-400">
-                                    ID: {user.id}
+                                    ID: {employee?.id}
                                 </span>
 
                             </CardContent>
@@ -232,11 +229,7 @@ export default function CompanyEmployeesPage() {
                 })}
             </div>
 
-            {employees.length === 0 && (
-                <div className="text-center py-16 text-slate-500">
-                    Сотрудники не найдены
-                </div>
-            )}
+
         </div>
     )
 }

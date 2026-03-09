@@ -54,13 +54,12 @@ export function useCreateCompanyEmployee(companyId: number) {
 }
 export function useDeleteCompanyEmployee(
     companyId: number,
-    employeeId: number
 ) {
 
     const qc = useQueryClient()
 
     return useMutation({
-        mutationFn: () =>
+        mutationFn: (employeeId: number) =>
             CompanyService.deleteCompanyEmployee(companyId, employeeId),
 
         onSuccess: () => {
@@ -80,7 +79,9 @@ export function useCurrentCompany() {
     return useQuery({
         queryKey: ["company", companyId],
         queryFn: () => CompanyService.getCompanyById(companyId!),
-        enabled: !!companyId
+        enabled: !!companyId,
+
     })
+
 
 }
