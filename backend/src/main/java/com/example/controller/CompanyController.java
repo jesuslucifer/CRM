@@ -5,7 +5,7 @@ import com.example.model.EmployeeRole;
 import com.example.model.User;
 import com.example.model.dto.request.CompanyEmployeeRequest;
 import com.example.model.dto.request.CreateCompanyRequest;
-import com.example.model.dto.response.CompanyDto;
+import com.example.model.dto.response.CompanyDetailDto;
 import com.example.model.dto.response.SuccessResponse;
 import com.example.security.SecurityUtil;
 import com.example.service.CompanyService;
@@ -37,14 +37,14 @@ public class CompanyController {
 
         companyService.create(company);
 
-        return ResponseEntity.ok(new CompanyDto(company));
+        return ResponseEntity.ok(new CompanyDetailDto(company));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
         Company company = companyService.getById(id);
 
-        return ResponseEntity.ok(new CompanyDto(company));
+        return ResponseEntity.ok(new CompanyDetailDto(company));
     }
 
     @PutMapping("/{id}/avatar")
@@ -57,21 +57,33 @@ public class CompanyController {
         );
     }
 
+//    @PutMapping("/{companyId}/employees")
+//    public ResponseEntity<?> addEmployee(@PathVariable Long companyId,
+//                                         @RequestBody CompanyEmployeeRequest companyEmployeeRequest) {
+//        companyService.addEmployee(companyEmployeeRequest.getEmployeeId(),
+//                companyId,
+//                companyEmployeeRequest.getEmployeeRole());
+//
+//        return ResponseEntity.ok(new CompanyDto(companyService.getById(companyId)));
+//    }
+
     @PutMapping("/{companyId}/employees")
     public ResponseEntity<?> addEmployee(@PathVariable Long companyId,
                                          @RequestBody CompanyEmployeeRequest companyEmployeeRequest) {
-        companyService.addEmployee(companyEmployeeRequest.getEmployeeId(),
+        companyService.addEmployee(companyEmployeeRequest.getEmail(),
                 companyId,
                 companyEmployeeRequest.getEmployeeRole());
 
-        return ResponseEntity.ok(new CompanyDto(companyService.getById(companyId)));
+        return ResponseEntity.ok(new CompanyDetailDto(companyService.getById(companyId)));
     }
 
     @DeleteMapping("/{companyId}/{employeeId}/employees")
     public ResponseEntity<?> removeEmployee(@PathVariable Long companyId,
                                             @PathVariable Long employeeId) {
-        companyService.removeEmployee( employeeId, companyId);
+        companyService.removeEmployee(employeeId, companyId);
 
-        return ResponseEntity.ok(new CompanyDto(companyService.getById(companyId)));
+        return ResponseEntity.ok(new CompanyDetailDto(companyService.getById(companyId)));
     }
+
+
 }

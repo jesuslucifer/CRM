@@ -10,5 +10,6 @@ public interface CompanyService {
     Company getById(Long id);
     void updateAvatarUrl(Long id, MultipartFile file);
     Company addEmployee(Long userId, Long companyId, EmployeeRole role);
+    Company addEmployee(String email, Long companyId, EmployeeRole role);
     Company removeEmployee(Long userId, Long companyId);
 }

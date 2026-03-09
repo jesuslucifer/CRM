@@ -80,6 +80,23 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    public Company addEmployee(String email, Long companyId, EmployeeRole role) {
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(CompanyNotFoundException::new);
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(UserNotFoundException::new);
+
+        if (companyEmployeeRepository.existsByCompanyIdAndUserEmail(companyId, email)) {
+            throw new EmployeeAlreadyExistsInCompanyException();
+        }
+
+        company.addEmployee(user, role);
+
+        return companyRepository.save(company);
+    }
+
+    @Override
     public Company removeEmployee(Long userId, Long companyId) {
         Company company = companyRepository.findById(companyId)
                 .orElseThrow(CompanyNotFoundException::new);

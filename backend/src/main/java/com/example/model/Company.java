@@ -35,10 +35,30 @@ public class Company {
     private List<CompanyEmployee> employees =  new ArrayList<>();
 
     public void addEmployee(User user, EmployeeRole role) {
-        employees.add(new CompanyEmployee(this, user, role));
+        CompanyEmployee companyEmployee = CompanyEmployee.builder()
+                .company(this)
+                .user(user)
+                .role(role)
+                .build();
+        employees.add(companyEmployee);
+        user.getCompanyEmployees().add(companyEmployee); // Синхронизация обеих сторон
     }
 
     public void removeEmployee(User user) {
-        employees.removeIf(employee -> employee.getUser().equals(user));
+        employees.removeIf(employee -> {
+            if (employee.getUser().equals(user)) {
+                user.getCompanyEmployees().remove(employee);
+                return true;
+            }
+            return false;
+        });
+    }
+
+    public EmployeeRole getEmployeeRole(User user) {
+        return employees.stream()
+                .filter(e -> e.getUser().equals(user))
+                .map(CompanyEmployee::getRole)
+                .findFirst()
+                .orElse(null);
     }
 }

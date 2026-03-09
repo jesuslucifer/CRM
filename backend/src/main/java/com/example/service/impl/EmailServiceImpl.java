@@ -48,15 +48,15 @@ public class EmailServiceImpl implements EmailService {
             String resetUrl = contextPath + "/reset-password?token=" + token;
 
             helper.setFrom(from);
-            helper.setTo(user.getEmail());
+            helper.setTo(email);
             helper.setSubject("Восстановление пароля");
             helper.setText(createPasswordResetEmailHtml(resetUrl), true);
 
             mailSender.send(message);
-            log.info("[EMAIL] : Уведомление отправлено пользователю {} : {}", user.getEmail(), "Восстановление пароля");
+            log.info("[EMAIL] : Уведомление отправлено пользователю {} : {}", email, "Восстановление пароля");
 
         } catch (MessagingException e) {
-            log.error("[EMAIL] : Ошибка при отправке уведомления пользователю {}", user.getEmail(), e);
+            log.error("[EMAIL] : Ошибка при отправке уведомления пользователю {}", email, e);
             throw new RuntimeException(e);
         }
     }

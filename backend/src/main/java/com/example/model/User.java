@@ -5,8 +5,10 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Data
@@ -44,8 +46,23 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Token> tokens;
 
-    @OneToMany(mappedBy = "userCreator", fetch = FetchType.EAGER)
-    private List<Company> companies;
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<CompanyEmployee> companyEmployees = new ArrayList<>();
+
+    public List<Company> getCompanies() {
+        return companyEmployees.stream()
+                .map(CompanyEmployee::getCompany)
+                .collect(Collectors.toList());
+    }
+
+    public EmployeeRole getRoleInCompany(Long companyId) {
+        return companyEmployees.stream()
+                .filter(ce -> ce.getCompany().getId().equals(companyId))
+                .map(CompanyEmployee::getRole)
+                .findFirst()
+                .orElse(null);
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
