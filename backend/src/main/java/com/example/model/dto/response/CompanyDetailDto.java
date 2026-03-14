@@ -12,6 +12,7 @@ public class CompanyDetailDto {
     private String name;
     private String avatarUrl;
     private List<EmployeeForCompanyDto> employees;
+    private List<PropertyResponse> properties;
 
     public CompanyDetailDto() {}
 
@@ -24,6 +25,11 @@ public class CompanyDetailDto {
         this.employees = company.getEmployees()
                 .stream()
                 .map(ce -> new EmployeeForCompanyDto(ce.getUser(), ce.getRole()))
+                .collect(Collectors.toList());
+
+        this.properties = company.getProperties()
+                .stream()
+                .map(PropertyResponse::new)
                 .collect(Collectors.toList());
     }
 }

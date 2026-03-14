@@ -1,14 +1,15 @@
 package com.example.controller;
 
-import com.example.model.Company;
-import com.example.model.EmployeeRole;
-import com.example.model.User;
+import com.example.model.*;
 import com.example.model.dto.request.CompanyEmployeeRequest;
 import com.example.model.dto.request.CreateCompanyRequest;
+import com.example.model.dto.request.CreatePropertyRequest;
 import com.example.model.dto.response.CompanyDetailDto;
+import com.example.model.dto.response.PropertyResponse;
 import com.example.model.dto.response.SuccessResponse;
 import com.example.security.SecurityUtil;
 import com.example.service.CompanyService;
+import com.example.service.PropertyService;
 import com.example.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class CompanyController {
     private final CompanyService companyService;
     private final UserService userService;
+    private final PropertyService propertyService;
 
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody CreateCompanyRequest request) {
@@ -38,6 +40,39 @@ public class CompanyController {
         companyService.create(company);
 
         return ResponseEntity.ok(new CompanyDetailDto(company));
+    }
+
+    @PostMapping("/{id}/property/create")
+    public ResponseEntity<?> createProperty(
+            @PathVariable Long id,
+            @RequestBody CreatePropertyRequest request) {
+        Company company = companyService.getById(id);
+
+        Property property = Property.builder()
+                .cadastralNumber(request.getCadastralNumber())
+                .company(company)
+                .title(request.getTitle())
+                .description(request.getDescription())
+                .propertyType(request.getPropertyType())
+                .dealType(request.getDealType())
+                .address(request.getAddress())
+                .city(request.getCity())
+                .district(request.getDistrict())
+                .price(request.getPrice())
+                .salePrice(request.getSalePrice())
+                .area(request.getArea())
+                .rooms(request.getRooms())
+                .floor(request.getFloor())
+                .totalFloors(request.getTotalFloors())
+                .yearBuilt(request.getYearBuilt())
+                .status(request.getPropertyStatus())
+                .build();
+
+        propertyService.create(property);
+
+        company.addProperty(property);
+
+        return ResponseEntity.ok(new PropertyResponse(property, company));
     }
 
     @GetMapping("/{id}")

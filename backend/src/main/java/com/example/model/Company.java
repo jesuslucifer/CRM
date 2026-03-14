@@ -34,6 +34,10 @@ public class Company {
     @Builder.Default
     private List<CompanyEmployee> employees =  new ArrayList<>();
 
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Property> properties = new ArrayList<>();
+
     public void addEmployee(User user, EmployeeRole role) {
         CompanyEmployee companyEmployee = CompanyEmployee.builder()
                 .company(this)
@@ -60,5 +64,13 @@ public class Company {
                 .map(CompanyEmployee::getRole)
                 .findFirst()
                 .orElse(null);
+    }
+
+    public void addProperty(Property property) {
+        properties.add(property);
+    }
+
+    public void removeProperty(Property property) {
+        properties.remove(property);
     }
 }
