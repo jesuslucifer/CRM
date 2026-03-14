@@ -82,6 +82,11 @@ public class CompanyController {
         return ResponseEntity.ok(new CompanyDetailDto(company));
     }
 
+    @GetMapping("/{id}/properties")
+    public ResponseEntity<?> getCompanyProperties(@PathVariable Long id) {
+        return ResponseEntity.ok(companyService.getCompanyProperties(id));
+    }
+
     @PutMapping("/{id}/avatar")
     public SuccessResponse updateAvatarUrl(@RequestParam("file") MultipartFile file, @PathVariable Long id) {
         companyService.updateAvatarUrl(id,file);

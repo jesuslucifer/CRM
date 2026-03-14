@@ -4,14 +4,19 @@ import com.example.exception.*;
 import com.example.model.Company;
 import com.example.model.EmployeeRole;
 import com.example.model.User;
+import com.example.model.dto.response.PropertyResponse;
 import com.example.repository.CompanyEmployeeRepository;
 import com.example.repository.CompanyRepository;
+import com.example.repository.PropertyRepository;
 import com.example.repository.UserRepository;
 import com.example.service.CompanyService;
 import com.example.service.LocalStorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +25,7 @@ public class CompanyServiceImpl implements CompanyService {
     private final LocalStorageService localStorageService;
     private final UserRepository userRepository;
     private final CompanyEmployeeRepository companyEmployeeRepository;
+    private final PropertyRepository propertyRepository;
 
     @Override
     public Company save(Company company) {
@@ -111,5 +117,16 @@ public class CompanyServiceImpl implements CompanyService {
         company.removeEmployee(user);
 
         return companyRepository.save(company);
+    }
+
+    @Override
+    public List<PropertyResponse> getCompanyProperties(Long companyId) {
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(CompanyNotFoundException::new);
+
+        return company.getProperties()
+                .stream()
+                .map(PropertyResponse::new)
+                .collect(Collectors.toList());
     }
 }

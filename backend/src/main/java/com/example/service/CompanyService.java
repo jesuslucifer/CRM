@@ -2,7 +2,10 @@ package com.example.service;
 
 import com.example.model.Company;
 import com.example.model.EmployeeRole;
+import com.example.model.dto.response.PropertyResponse;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 public interface CompanyService {
     Company save(Company company);
@@ -12,4 +15,5 @@ public interface CompanyService {
     Company addEmployee(Long userId, Long companyId, EmployeeRole role);
     Company addEmployee(String email, Long companyId, EmployeeRole role);
     Company removeEmployee(Long userId, Long companyId);
+    List<PropertyResponse> getCompanyProperties(Long companyId);
 }
