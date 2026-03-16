@@ -5,5 +5,6 @@ public enum PropertyType {
     OFFICE, // офис
     COMMERCIAL, // коммерческая недвижимость
     LAND_PLOT, // земельный участок
-    APARTMENT, // квартира
+    APARTMENT,
+    LAND// квартира
 }

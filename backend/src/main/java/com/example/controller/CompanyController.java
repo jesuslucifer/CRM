@@ -5,6 +5,7 @@ import com.example.model.dto.request.CompanyEmployeeRequest;
 import com.example.model.dto.request.CreateCompanyRequest;
 import com.example.model.dto.request.CreatePropertyRequest;
 import com.example.model.dto.response.CompanyDetailDto;
+import com.example.model.dto.response.ImportResult;
 import com.example.model.dto.response.PropertyResponse;
 import com.example.model.dto.response.SuccessResponse;
 import com.example.security.SecurityUtil;
@@ -12,11 +13,19 @@ import com.example.service.CompanyService;
 import com.example.service.PropertyService;
 import com.example.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Properties;
+
+@Slf4j
 @RestController
 @RequestMapping("/api/company")
 @RequiredArgsConstructor
@@ -125,5 +134,51 @@ public class CompanyController {
         return ResponseEntity.ok(new CompanyDetailDto(companyService.getById(companyId)));
     }
 
+    @PostMapping("/{id}/import-from-csv")
+    public ResponseEntity<?> importFromCsvNio(
+            @RequestParam("file") MultipartFile file,
+            @PathVariable("id") Long companyId) {
 
+        log.info("Получен запрос на импорт CSV файла (NIO): {}, companyId: {}",
+                file.getOriginalFilename(), companyId);
+
+        Path tempFile = null;
+
+        try {
+            // Создаем временный файл с помощью NIO
+            tempFile = Files.createTempFile("import_", "_" + file.getOriginalFilename());
+
+            // Копируем содержимое MultipartFile во временный файл
+            file.transferTo(tempFile.toFile());
+
+            log.debug("Временный файл создан (NIO): {}", tempFile.toAbsolutePath());
+
+            // Вызываем сервис для импорта
+            List<Property> importedProperties = propertyService.importFromCsv(
+                    tempFile.toAbsolutePath().toString(),
+                    companyId
+            );
+
+            return ResponseEntity.ok("Импорт успешно завершен");
+
+        } catch (IOException e) {
+            log.error("Ошибка при обработке файла (NIO): {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ImportResult.error("Ошибка при обработке файла: " + e.getMessage()));
+        } catch (Exception e) {
+            log.error("Неожиданная ошибка при импорте (NIO): {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ImportResult.error("Внутренняя ошибка сервера: " + e.getMessage()));
+        } finally {
+            // Удаляем временный файл
+            if (tempFile != null) {
+                try {
+                    Files.deleteIfExists(tempFile);
+                    log.debug("Временный файл удален (NIO): {}", tempFile.toAbsolutePath());
+                } catch (IOException e) {
+                    log.warn("Не удалось удалить временный файл (NIO): {}", tempFile.toAbsolutePath(), e);
+                }
+            }
+        }
+    }
 }
