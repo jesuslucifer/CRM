@@ -191,6 +191,15 @@ public class PropertyServiceImpl implements PropertyService {
                             ? Integer.parseInt(split[10].trim()) : 0)
                     .status(split.length > 11 && !split[11].trim().isEmpty()
                             ? PropertyStatus.valueOf(split[11].trim()) : PropertyStatus.AVAILABLE)
+                    .city(split.length > 12 && !split[12].trim().isEmpty()
+                            ? split[12].trim() : null)
+                    .price(split.length > 13 && !split[13].trim().isEmpty() ?
+                            new BigDecimal(split[13].trim()) : BigDecimal.ZERO)
+                    .district(split.length > 14 && !split[14].trim().isEmpty()
+                            ? split[14].trim() : null)
+                    .floor(split.length > 15 && !split[15].trim().isEmpty()
+                            ? Integer.parseInt(split[15].trim()) : 0)
+
                     .company(company)
                     .build();
         } catch (Exception e) {
@@ -220,6 +229,14 @@ public class PropertyServiceImpl implements PropertyService {
                 property.setYearBuilt(Integer.parseInt(split[10].trim()));
             if (split.length > 11 && !split[11].trim().isEmpty())
                 property.setStatus(PropertyStatus.valueOf(split[11].trim()));
+            if (split.length > 12 && !split[12].trim().isEmpty())
+                property.setCity(split[12].trim());
+            if (split.length > 13 && !split[13].trim().isEmpty())
+                property.setPrice(new BigDecimal(split[13].trim()));
+            if (split.length > 14 && !split[14].trim().isEmpty())
+                property.setDistrict(split[14].trim());
+            if (split.length > 15 && !split[15].trim().isEmpty())
+                property.setFloor(Integer.parseInt(split[15].trim()));
         } catch (Exception e) {
             log.error("Ошибка при обновлении Property из CSV", e);
             throw new IllegalArgumentException("Некорректные данные в CSV", e);
