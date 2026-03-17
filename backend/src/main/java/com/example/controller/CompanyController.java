@@ -4,10 +4,12 @@ import com.example.model.*;
 import com.example.model.dto.request.CompanyEmployeeRequest;
 import com.example.model.dto.request.CreateCompanyRequest;
 import com.example.model.dto.request.CreatePropertyRequest;
+import com.example.model.dto.request.OrderCreateRequest;
 import com.example.model.dto.response.CompanyDetailDto;
 import com.example.model.dto.response.ImportResult;
 import com.example.model.dto.response.PropertyResponse;
 import com.example.model.dto.response.SuccessResponse;
+import com.example.model.enums.EmployeeRole;
 import com.example.security.SecurityUtil;
 import com.example.service.CompanyService;
 import com.example.service.PropertyService;
@@ -23,7 +25,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Properties;
 
 @Slf4j
 @RestController
@@ -82,6 +83,17 @@ public class CompanyController {
         company.addProperty(property);
 
         return ResponseEntity.ok(new PropertyResponse(property, company));
+    }
+
+    @PostMapping("/{id}/order/create")
+    public ResponseEntity<?> createOrder(
+            @PathVariable Long id,
+            @RequestBody OrderCreateRequest request) {
+        Company company = companyService.getById(id);
+
+        Order order = Order.builder()
+                .company(company)
+                .
     }
 
     @GetMapping("/{id}")

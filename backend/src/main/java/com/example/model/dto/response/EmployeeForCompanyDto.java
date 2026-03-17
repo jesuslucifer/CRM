@@ -1,6 +1,6 @@
 package com.example.model.dto.response;
 
-import com.example.model.EmployeeRole;
+import com.example.model.enums.EmployeeRole;
 import com.example.model.User;
 import lombok.Data;
 

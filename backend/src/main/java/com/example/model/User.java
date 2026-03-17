@@ -1,5 +1,7 @@
 package com.example.model;
 
+import com.example.model.enums.EmployeeRole;
+import com.example.model.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;

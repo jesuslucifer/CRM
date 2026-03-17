@@ -1,7 +1,7 @@
 package com.example.service;
 
 import com.example.model.Company;
-import com.example.model.EmployeeRole;
+import com.example.model.enums.EmployeeRole;
 import com.example.model.dto.response.PropertyResponse;
 import org.springframework.web.multipart.MultipartFile;
 

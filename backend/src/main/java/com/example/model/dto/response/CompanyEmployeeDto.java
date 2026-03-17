@@ -1,7 +1,7 @@
 package com.example.model.dto.response;
 
 import com.example.model.CompanyEmployee;
-import com.example.model.EmployeeRole;
+import com.example.model.enums.EmployeeRole;
 import lombok.Data;
 
 @Data

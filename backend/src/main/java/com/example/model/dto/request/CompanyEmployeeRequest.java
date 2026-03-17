@@ -1,6 +1,6 @@
 package com.example.model.dto.request;
 
-import com.example.model.EmployeeRole;
+import com.example.model.enums.EmployeeRole;
 import lombok.Data;
 
 @Data

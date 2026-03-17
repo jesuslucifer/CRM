@@ -1,6 +1,9 @@
 package com.example.model.dto.response;
 
 import com.example.model.*;
+import com.example.model.enums.DealType;
+import com.example.model.enums.PropertyStatus;
+import com.example.model.enums.PropertyType;
 import lombok.Data;
 
 import java.math.BigDecimal;

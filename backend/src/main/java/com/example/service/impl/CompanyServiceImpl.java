@@ -2,7 +2,7 @@ package com.example.service.impl;
 
 import com.example.exception.*;
 import com.example.model.Company;
-import com.example.model.EmployeeRole;
+import com.example.model.enums.EmployeeRole;
 import com.example.model.User;
 import com.example.model.dto.response.PropertyResponse;
 import com.example.repository.CompanyEmployeeRepository;
