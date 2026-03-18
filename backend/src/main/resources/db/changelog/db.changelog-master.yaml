@@ -19,3 +19,5 @@ databaseChangeLog:
       file: db/changelog/17.03.2026/create-table-orders.yaml
   - include:
       file: db/changelog/17.03.2026/create-table-clients.yaml
+  - include:
+      file: db/changelog/18.03.2026/create-table-deals.yaml

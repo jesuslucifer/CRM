@@ -1,7 +1,6 @@
 package com.example.service.impl;
 
-import com.example.exception.EmployeeAlreadyExistsInCompanyException;
-import com.example.exception.IdNotFoundException;
+import com.example.exception.*;
 import com.example.model.*;
 import com.example.model.dto.request.PropertyCreateRequest;
 import com.example.model.enums.DealType;
@@ -40,7 +39,7 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     public Property create(Property property) {
         if (propertyRepository.existsByCadastralNumberAndCompanyId(property.getCadastralNumber(), property.getCompany().getId())) {
-            throw new EmployeeAlreadyExistsInCompanyException(); //TODO: EXCEPTION
+            throw new PropertyAlreadyExistsException();
         }
 
         return save(property);
@@ -49,7 +48,7 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     public Property update(Long id, PropertyCreateRequest request) {
         Property property = propertyRepository.findById(id)
-                .orElseThrow(IdNotFoundException::new); //TODO: EXCEPTION
+                .orElseThrow(PropertyNotFoundException::new);
 
         property.setTitle(request.getTitle());
         property.setDescription(request.getDescription());
@@ -73,7 +72,7 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     public Property getById(Long id) {
         return propertyRepository.findById(id)
-                .orElseThrow(IdNotFoundException::new); //TODO: EXCEPTION
+                .orElseThrow(PropertyNotFoundException::new);
     }
 
     @Override
@@ -83,25 +82,20 @@ public class PropertyServiceImpl implements PropertyService {
         int updatedCount = 0;
         int skippedCount = 0;
 
-        // Получаем компанию (если нужна для связи)
-        // Company company = companyService.getById(companyId);
-
         try (Scanner sc = new Scanner(new File(fileName))) {
-            // Пропускаем заголовок
             if (sc.hasNextLine()) {
                 sc.nextLine();
             }
 
-            // Собираем все кадастровые номера из CSV для пакетной проверки
             List<Long> cadastralNumbers = new ArrayList<>();
             List<String[]> csvRows = new ArrayList<>();
 
             while (sc.hasNextLine()) {
                 String line = sc.nextLine().trim();
-                if (line.isEmpty()) continue; // Пропускаем пустые строки
+                if (line.isEmpty()) continue;
 
                 String[] split = line.split(",");
-                if (split.length >= 12) { // Проверяем минимальное количество полей
+                if (split.length >= 12) {
                     try {
                         Long cadastralNumber = Long.parseLong(split[0].trim());
                         cadastralNumbers.add(cadastralNumber);
@@ -116,30 +110,25 @@ public class PropertyServiceImpl implements PropertyService {
                 }
             }
 
-            // Пакетно получаем существующие объекты недвижимости
             List<Property> existingProperties = propertyRepository
                     .findAllByCadastralNumberInAndCompanyId(cadastralNumbers, companyId);
 
-            // Создаем Map для быстрого поиска по кадастровому номеру
             Map<Long, Property> propertyMap = existingProperties.stream()
                     .collect(Collectors.toMap(
                             Property::getCadastralNumber,
                             property -> property
                     ));
 
-            // Обрабатываем каждую строку
             for (String[] split : csvRows) {
                 try {
                     Long cadastralNumber = Long.parseLong(split[0].trim());
 
                     if (propertyMap.containsKey(cadastralNumber)) {
-                        // Обновляем существующую недвижимость
                         Property existingProperty = propertyMap.get(cadastralNumber);
                         updatePropertyFromCsv(existingProperty, split);
                         importedProperties.add(existingProperty);
                         updatedCount++;
                     } else {
-                        // Создаем новую недвижимость
                         Property newProperty = toProperty(split, companyId);
                         importedProperties.add(newProperty);
                         createdCount++;
@@ -172,7 +161,7 @@ public class PropertyServiceImpl implements PropertyService {
     private Property toProperty(String[] split, Long companyId) {
         try {
             Company company = companyRepository.findById(companyId)
-                    .orElseThrow(IdNotFoundException::new); //TODO EXCEPTION
+                    .orElseThrow(CompanyNotFoundException::new);
             return Property.builder()
                     .cadastralNumber(Long.parseLong(split[0].trim()))
                     .title(split.length > 1 ? split[1].trim() : null)

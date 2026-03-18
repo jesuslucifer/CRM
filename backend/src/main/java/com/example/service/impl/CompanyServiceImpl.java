@@ -79,7 +79,7 @@ public class CompanyServiceImpl implements CompanyService {
                 .orElseThrow(UserNotFoundException::new);
 
         if (companyEmployeeRepository.existsByCompanyIdAndUserId(companyId, userId)) {
-            throw new EmployeeAlreadyExistsInCompanyException();
+            throw new EmployeeAlreadyExistsException();
         }
 
         company.addEmployee(user, role);
@@ -96,7 +96,7 @@ public class CompanyServiceImpl implements CompanyService {
                 .orElseThrow(UserNotFoundException::new);
 
         if (companyEmployeeRepository.existsByCompanyIdAndUserEmail(companyId, email)) {
-            throw new EmployeeAlreadyExistsInCompanyException();
+            throw new EmployeeAlreadyExistsException();
         }
 
         company.addEmployee(user, role);
@@ -113,7 +113,7 @@ public class CompanyServiceImpl implements CompanyService {
                 .orElseThrow(UserNotFoundException::new);
 
         if (!companyEmployeeRepository.existsByCompanyIdAndUserId(companyId, userId)) {
-            throw new EmployeeNotFoundInCompanyException();
+            throw new EmployeeNotFoundException();
         }
 
         company.removeEmployee(user);

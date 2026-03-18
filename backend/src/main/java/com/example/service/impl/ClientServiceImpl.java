@@ -1,7 +1,6 @@
 package com.example.service.impl;
 
-import com.example.exception.CompanyNotFoundException;
-import com.example.exception.EmailAlreadyExistsException;
+import com.example.exception.*;
 import com.example.model.Client;
 import com.example.repository.ClientRepository;
 import com.example.service.ClientService;
@@ -20,12 +19,19 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public Client create(Client client) {
-        if (clientRepository.existsByEmail(client.getEmail())) {
+        if (clientRepository.existsByEmailAndCompanyId(
+                client.getEmail(), client.getCompany().getId())) {
             throw new EmailAlreadyExistsException();
         }
 
-        if (clientRepository.existsByPhone(client.getPhone())) {
-            throw new EmailAlreadyExistsException(); //TODO EXCEPTION
+        if (clientRepository.existsByPhoneAndCompanyId(
+                client.getPhone(), client.getCompany().getId())) {
+            throw new PhoneAlreadyExistsException();
+        }
+
+        if (clientRepository.existsByPhoneAndEmailAndCompanyId(
+                client.getEmail(), client.getPhone(), client.getCompany().getId())) {
+            throw new ClientAlreadyExistsException();
         }
 
         return save(client);
@@ -34,6 +40,6 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public Client getById(Long id) {
         return clientRepository.findById(id)
-                .orElseThrow(CompanyNotFoundException::new); //TODO EXCEPTION
+                .orElseThrow(ClientNotFoundException::new);
     }
 }
