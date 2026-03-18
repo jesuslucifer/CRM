@@ -103,7 +103,7 @@ public class CompanyController {
     }
 
     @PostMapping("/{id}/client/create")
-    public ResponseEntity<?> create(
+    public ResponseEntity<?> createClient(
             @PathVariable Long id,
             @RequestBody ClientCreateRequest request) {
         Company company = companyService.getById(id);
@@ -116,6 +116,7 @@ public class CompanyController {
                 .email(request.getEmail())
                 .clientType(request.getClientType())
                 .clientSource(request.getClientSource())
+                .notes(request.getNotes())
                 .build();
 
         clientService.create(client);

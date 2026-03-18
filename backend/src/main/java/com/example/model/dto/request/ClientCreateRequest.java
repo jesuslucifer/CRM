@@ -12,4 +12,5 @@ public class ClientCreateRequest {
     private String email;
     private ClientType clientType;
     private ClientSource clientSource;
+    private String notes;
 }
