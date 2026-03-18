@@ -8,7 +8,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-public class CreatePropertyRequest {
+public class PropertyCreateRequest {
     private Long cadastralNumber;
     private String title;
     private String description;

@@ -3,7 +3,7 @@ package com.example.service.impl;
 import com.example.exception.EmployeeAlreadyExistsInCompanyException;
 import com.example.exception.IdNotFoundException;
 import com.example.model.*;
-import com.example.model.dto.request.CreatePropertyRequest;
+import com.example.model.dto.request.PropertyCreateRequest;
 import com.example.model.enums.DealType;
 import com.example.model.enums.PropertyStatus;
 import com.example.model.enums.PropertyType;
@@ -47,7 +47,7 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     @Override
-    public Property update(Long id, CreatePropertyRequest request) {
+    public Property update(Long id, PropertyCreateRequest request) {
         Property property = propertyRepository.findById(id)
                 .orElseThrow(IdNotFoundException::new); //TODO: EXCEPTION
 

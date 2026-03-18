@@ -26,7 +26,7 @@ public class Order {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id")
-    private Client Client;
+    private Client client;
 
     @Column(name = "city")
     private String city;

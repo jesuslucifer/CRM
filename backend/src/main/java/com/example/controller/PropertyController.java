@@ -1,6 +1,6 @@
 package com.example.controller;
 
-import com.example.model.dto.request.CreatePropertyRequest;
+import com.example.model.dto.request.PropertyCreateRequest;
 import com.example.model.dto.response.PropertyResponse;
 import com.example.service.PropertyService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class PropertyController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateProperty(@PathVariable Long id, @RequestBody CreatePropertyRequest request) {
+    public ResponseEntity<?> updateProperty(@PathVariable Long id, @RequestBody PropertyCreateRequest request) {
         propertyService.update(id, request);
 
         return okDto(id);

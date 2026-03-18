@@ -2,6 +2,8 @@ package com.example.service.impl;
 
 import com.example.exception.*;
 import com.example.model.Company;
+import com.example.model.dto.response.ClientDto;
+import com.example.model.dto.response.OrderDto;
 import com.example.model.enums.EmployeeRole;
 import com.example.model.User;
 import com.example.model.dto.response.PropertyResponse;
@@ -120,13 +122,35 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public List<PropertyResponse> getCompanyProperties(Long companyId) {
+    public List<PropertyResponse> getProperties(Long companyId) {
         Company company = companyRepository.findById(companyId)
                 .orElseThrow(CompanyNotFoundException::new);
 
         return company.getProperties()
                 .stream()
                 .map(PropertyResponse::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OrderDto> getOrders(Long companyId) {
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(CompanyNotFoundException::new);
+
+        return company.getOrders()
+                .stream()
+                .map(OrderDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ClientDto> getClients(Long companyId) {
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(CompanyNotFoundException::new);
+
+        return company.getClients()
+                .stream()
+                .map(ClientDto::new)
                 .collect(Collectors.toList());
     }
 }

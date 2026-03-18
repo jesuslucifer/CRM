@@ -6,7 +6,6 @@ import lombok.Data;
 
 @Data
 public class ClientCreateRequest {
-    private Long companyId;
     private String firstName;
     private String lastName;
     private String phone;

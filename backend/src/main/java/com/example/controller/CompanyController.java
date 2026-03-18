@@ -1,19 +1,11 @@
 package com.example.controller;
 
 import com.example.model.*;
-import com.example.model.dto.request.CompanyEmployeeRequest;
-import com.example.model.dto.request.CreateCompanyRequest;
-import com.example.model.dto.request.CreatePropertyRequest;
-import com.example.model.dto.request.OrderCreateRequest;
-import com.example.model.dto.response.CompanyDetailDto;
-import com.example.model.dto.response.ImportResult;
-import com.example.model.dto.response.PropertyResponse;
-import com.example.model.dto.response.SuccessResponse;
+import com.example.model.dto.request.*;
+import com.example.model.dto.response.*;
 import com.example.model.enums.EmployeeRole;
 import com.example.security.SecurityUtil;
-import com.example.service.CompanyService;
-import com.example.service.PropertyService;
-import com.example.service.UserService;
+import com.example.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -34,9 +26,11 @@ public class CompanyController {
     private final CompanyService companyService;
     private final UserService userService;
     private final PropertyService propertyService;
+    private final ClientService clientService;
+    private final OrderService orderService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> create(@RequestBody CreateCompanyRequest request) {
+    public ResponseEntity<?> create(@RequestBody CompanyCreateRequest request) {
         User user = SecurityUtil.getCurrentUser();
 
         Company company = Company.builder()
@@ -55,7 +49,7 @@ public class CompanyController {
     @PostMapping("/{id}/property/create")
     public ResponseEntity<?> createProperty(
             @PathVariable Long id,
-            @RequestBody CreatePropertyRequest request) {
+            @RequestBody PropertyCreateRequest request) {
         Company company = companyService.getById(id);
 
         Property property = Property.builder()
@@ -90,10 +84,45 @@ public class CompanyController {
             @PathVariable Long id,
             @RequestBody OrderCreateRequest request) {
         Company company = companyService.getById(id);
+        Client client = clientService.getById(request.getClientId());
 
         Order order = Order.builder()
                 .company(company)
-                .
+                .client(client)
+                .city(request.getCity())
+                .dealType(request.getDealType())
+                .propertyType(request.getPropertyType())
+                .description(request.getDescription())
+                .build();
+
+        orderService.create(order);
+
+        client.addOrder(order);
+
+        return ResponseEntity.ok(new OrderDto(order));
+    }
+
+    @PostMapping("/{id}/client/create")
+    public ResponseEntity<?> create(
+            @PathVariable Long id,
+            @RequestBody ClientCreateRequest request) {
+        Company company = companyService.getById(id);
+
+        Client client = Client.builder()
+                .company(company)
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .phone(request.getPhone())
+                .email(request.getEmail())
+                .clientType(request.getClientType())
+                .clientSource(request.getClientSource())
+                .build();
+
+        clientService.create(client);
+
+        company.addClient(client);
+
+        return ResponseEntity.ok(new ClientDto(client));
     }
 
     @GetMapping("/{id}")
@@ -104,8 +133,18 @@ public class CompanyController {
     }
 
     @GetMapping("/{id}/properties")
-    public ResponseEntity<?> getCompanyProperties(@PathVariable Long id) {
-        return ResponseEntity.ok(companyService.getCompanyProperties(id));
+    public ResponseEntity<?> getProperties(@PathVariable Long id) {
+        return ResponseEntity.ok(companyService.getProperties(id));
+    }
+
+    @GetMapping("/{id}/orders")
+    public ResponseEntity<?> getOrders(@PathVariable Long id) {
+        return ResponseEntity.ok(companyService.getOrders(id));
+    }
+
+    @GetMapping("/{id}/clients")
+    public ResponseEntity<?> getClients(@PathVariable Long id) {
+        return ResponseEntity.ok(companyService.getClients(id));
     }
 
     @PutMapping("/{id}/avatar")

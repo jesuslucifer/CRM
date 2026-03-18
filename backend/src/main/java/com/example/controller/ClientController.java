@@ -1,13 +1,10 @@
 package com.example.controller;
 
-import com.example.model.Client;
-import com.example.model.dto.request.ClientCreateRequest;
-import com.example.model.enums.ClientType;
+import com.example.model.dto.response.ClientWithOrdersResponse;
 import com.example.service.ClientService;
-import com.example.service.CompanyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,19 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/client/")
 public class ClientController {
     private final ClientService clientService;
-    private final CompanyService companyService;
 
-    public ResponseEntity<?> create(@RequestBody ClientCreateRequest request) {
-        Client client = Client.builder()
-                .company(companyService.getById(request.getCompanyId()))
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
-                .phone(request.getPhone())
-                .email(request.getEmail())
-                .clientType(request.getClientType())
-                .clientSource(request.getClientSource())
-                .build();
-
-
+    @RequestMapping("/{id}")
+    public ResponseEntity<?> getClient(@PathVariable Long id) {
+        return ResponseEntity.ok(new ClientWithOrdersResponse(clientService.getById(id)));
     }
 }
