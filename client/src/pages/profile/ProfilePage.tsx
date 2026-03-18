@@ -8,6 +8,7 @@ import { useState } from "react"
 
 import { authService } from "@/service/auth.service"
 import { useNavigate } from "react-router"
+import { Input } from "@/components/ui/input"
 
 
 export default function ProfilePage() {
@@ -25,6 +26,7 @@ export default function ProfilePage() {
         <div className="flex items-center gap-6">
           <Avatar className="h-24 w-24 shadow-lg ring-4 ring-indigo-100">
             <AvatarImage src="https://github.com/shadcn.png" />
+
             <AvatarFallback className="text-xl">
               {user?.username?.charAt(0)}
             </AvatarFallback>

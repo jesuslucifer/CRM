@@ -18,4 +18,5 @@ export const PropertyService = {
         const { data: responseData } = await axiosWithAuth.put(`property/${id}`, data);
         return responseData;
     }
+
 }
