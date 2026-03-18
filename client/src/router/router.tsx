@@ -21,6 +21,8 @@ import CompanyLayout from "@/layout/CompanyLayout"
 import CompanyPage from "@/pages/company/CompanyPage"
 import CompanyList from "@/pages/company/CompanyListPage"
 import CompanyEmployeesPage from "@/pages/employees/CompanyEmployeesPage"
+import { PropertyPage } from "@/pages/property/PropertyPage"
+import { PropertyDetailsPage } from "@/pages/property/PropertyDetailsPage"
 
 function requireAuth() {
     const token = getAccessToken()
@@ -80,6 +82,13 @@ export const router = createBrowserRouter([
 
                         ]
                     },
+                    {
+                        path: "property",
+                        element: <PropertyPage />,
+
+
+                    },
+                    { path: "property/:propertyId", element: <PropertyDetailsPage /> },
                     { path: "employees", element: <CompanyEmployeesPage /> },
                     { path: "profile", element: <ProfilePage /> },
                     { path: "settings", element: <SettingsPage /> },

@@ -2,83 +2,83 @@ import { userService, type IChangePassword } from "@/service/user.service"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { useNavigate } from "react-router"
 import { toast } from "react-toastify"
- 
-export interface IForgotPassword{
+
+export interface IForgotPassword {
    email: string
 }
-export interface IChangeEmail{
+export interface IChangeEmail {
    email: string,
    password: string
 }
 export function useGetUserById(id: number) {
-    
+
    return useQuery({
-    queryKey: ['user'],
-    queryFn: () => userService.getUserById(id)
+      queryKey: ['user'],
+      queryFn: () => userService.getUserById(id)
    })
 }
 
 export function useGetAllUsers() {
-    
+
    return useQuery({
-    queryKey: ['users'],
-    queryFn: userService.getAllUsers
+      queryKey: ['users'],
+      queryFn: userService.getAllUsers
    })
 }
-export function useForgotPassword(){
+export function useForgotPassword() {
    const navigate = useNavigate();
-   const {mutate, isPending} = useMutation({
+   const { mutate, isPending } = useMutation({
       mutationKey: ['forgot-password'],
-      mutationFn:(data:IForgotPassword) => userService.forgotPassword(data),
+      mutationFn: (data: IForgotPassword) => userService.forgotPassword(data),
       onSuccess: () => {
          // navigate('/login');
          console.log('good');
-          toast.success("Письмо отправлено на почту")
+         toast.success("Письмо отправлено на почту")
       },
-       onError(error: any) {
-            toast.error(error?.message || "Ошибка при смене пароля")
-          },
+      onError(error: any) {
+         toast.error(error?.message || "Ошибка при смене пароля")
+      },
    })
    const onSubmit = (email: string) => {
-      mutate({email})
+      mutate({ email })
    }
-   return {onSubmit, isPending}
+   return { onSubmit, isPending }
 }
-export function useChangePassword(){
+export function useChangePassword() {
    const navigate = useNavigate();
-   const {mutate, isPending} = useMutation({
+   const { mutate, isPending } = useMutation({
       mutationKey: ['change-password'],
-      mutationFn:(data:IChangePassword) => userService.changePassword(data),
+      mutationFn: (data: IChangePassword) => userService.changePassword(data),
       onSuccess: () => {
          // navigate('/login');
          console.log('good')
-          toast.success("Пароль изменен")
+         toast.success("Пароль изменен")
       },
-       onError(error: any) {
-            toast.error(error?.message || "Ошибка при смене пароля")
-          },
+      onError(error: any) {
+         toast.error(error?.message || "Ошибка при смене пароля")
+      },
    })
-   const onSubmit = (currentPassword:string,newPassword: string) => {
-      mutate({currentPassword, newPassword})
+   const onSubmit = (currentPassword: string, newPassword: string) => {
+      mutate({ currentPassword, newPassword })
    }
-   return {onSubmit, isPending}
+   return { onSubmit, isPending }
 }
-export function useChangeEmail(){
+export function useChangeEmail() {
    const navigate = useNavigate();
-   const {mutate, isPending} = useMutation({
+   const { mutate, isPending } = useMutation({
       mutationKey: ['change-email'],
-      mutationFn:(data:IChangeEmail) => userService.changeEmail(data),
+      mutationFn: (data: IChangeEmail) => userService.changeEmail(data),
       onSuccess: () => {
          // navigate('/login');
          console.log('good')
-          toast.success("Почта изменена")
+         toast.success("Почта изменена")
       },
-       onError(error: any) {
-            toast.error(error?.message || "Ошибка при смене почты")
-          },
+      onError(error: any) {
+         toast.error(error?.message || "Ошибка при смене почты")
+      },
    })
-   const onSubmit = (email:string,password: string) => {
-      mutate({email, password})
+   const onSubmit = (email: string, password: string) => {
+      mutate({ email, password })
    }
-   return {onSubmit, isPending}
+   return { onSubmit, isPending }
 }

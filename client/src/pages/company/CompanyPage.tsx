@@ -1,4 +1,4 @@
-import { useCurrentCompany, useGetCompanyById } from "@/shared/hooks/useCompany"
+import { useCurrentCompany } from "@/shared/hooks/useCompany"
 import { useMemo } from "react"
 import { useParams } from "react-router"
 import { Building2, MapPin, Phone, Mail, Globe } from "lucide-react"

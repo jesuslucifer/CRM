@@ -24,7 +24,7 @@ export default function CompanySidebar() {
         {
             label: "Объекты недвижимости",
             icon: Home,
-            to: `/company/${companyId}/real-estate`
+            to: `/company/${companyId}/property`
         },
         {
             label: "Сотрудники",
