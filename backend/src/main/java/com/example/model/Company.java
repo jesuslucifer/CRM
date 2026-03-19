@@ -47,6 +47,10 @@ public class Company {
     @Builder.Default
     private List<Client> clients = new ArrayList<>();
 
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Deal> deals = new ArrayList<>();
+
     public void addEmployee(User user, EmployeeRole role) {
         CompanyEmployee companyEmployee = CompanyEmployee.builder()
                 .company(this)
@@ -97,5 +101,13 @@ public class Company {
 
     public void removeClient(Client client) {
         clients.remove(client);
+    }
+
+    public void addDeal(Deal deal) {
+        deals.add(deal);
+    }
+
+    public void removeDeal(Deal deal) {
+        deals.remove(deal);
     }
 }

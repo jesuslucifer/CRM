@@ -1,5 +1,6 @@
 package com.example.model;
 
+import com.example.model.enums.DealStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,8 +39,9 @@ public class Deal {
     @JoinColumn(name = "agent_id")
     private User agent;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private String status;
+    private DealStatus status;
 
     @Column(name = "price")
     private BigDecimal price;

@@ -28,6 +28,7 @@ public class CompanyController {
     private final PropertyService propertyService;
     private final ClientService clientService;
     private final OrderService orderService;
+    private final DealService dealService;
 
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody CompanyCreateRequest request) {
@@ -126,6 +127,36 @@ public class CompanyController {
         return ResponseEntity.ok(new ClientDto(client));
     }
 
+    @PostMapping("/{id}/deal/create")
+    public ResponseEntity<?> createDeal(
+            @PathVariable Long id,
+            @RequestBody DealCreateRequest request) {
+        Company company = companyService.getById(id);
+        Client client = clientService.getById(request.getClientId());
+        Property property = propertyService.getById(request.getPropertyId());
+        User agent = userService.getById(request.getAgentId());
+
+        Deal deal = Deal.builder()
+                .company(company)
+                .client(client)
+                .property(property)
+                .agent(agent)
+                .status(request.getStatus())
+                .price(request.getPrice())
+                .build();
+
+        dealService.create(deal);
+
+        company.addDeal(deal);
+        client.addDeal(deal);
+        agent.addDeal(deal);
+
+        return ResponseEntity.ok(new SuccessResponse(
+                "Сделка создана",
+                HttpStatus.OK
+        ));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
         Company company = companyService.getById(id);
@@ -149,7 +180,9 @@ public class CompanyController {
     }
 
     @PutMapping("/{id}/avatar")
-    public SuccessResponse updateAvatarUrl(@RequestParam("file") MultipartFile file, @PathVariable Long id) {
+    public SuccessResponse updateAvatarUrl(
+            @RequestParam("file") MultipartFile file,
+            @PathVariable Long id) {
         companyService.updateAvatarUrl(id,file);
 
         return new SuccessResponse(
@@ -186,6 +219,27 @@ public class CompanyController {
         return ResponseEntity.ok(new CompanyDetailDto(companyService.getById(companyId)));
     }
 
+    @DeleteMapping("/{companyId}/{propertyId}/property")
+    public ResponseEntity<?> removeProperty(
+            @PathVariable Long companyId,
+            @PathVariable Long propertyId) {
+        companyService.removeProperty(companyId, propertyId);
+
+        return ResponseEntity.ok(companyService.getProperties(companyId));
+    }
+
+    @DeleteMapping("/{companyId}/{orderId}/order")
+    public ResponseEntity<?> removeOrder(
+            @PathVariable Long companyId,
+            @PathVariable Long orderId) {
+        companyService.removeOrder(companyId, orderId);
+
+        return ResponseEntity.ok(new SuccessResponse(
+                "Заявка удалена",
+                HttpStatus.OK
+        ));
+    }
+
     @PostMapping("/{id}/import-from-csv")
     public ResponseEntity<?> importFromCsvNio(
             @RequestParam("file") MultipartFile file,
@@ -197,15 +251,12 @@ public class CompanyController {
         Path tempFile = null;
 
         try {
-            // Создаем временный файл с помощью NIO
             tempFile = Files.createTempFile("import_", "_" + file.getOriginalFilename());
 
-            // Копируем содержимое MultipartFile во временный файл
             file.transferTo(tempFile.toFile());
 
             log.debug("Временный файл создан (NIO): {}", tempFile.toAbsolutePath());
 
-            // Вызываем сервис для импорта
             List<Property> importedProperties = propertyService.importFromCsv(
                     tempFile.toAbsolutePath().toString(),
                     companyId
@@ -222,7 +273,6 @@ public class CompanyController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ImportResult.error("Внутренняя ошибка сервера: " + e.getMessage()));
         } finally {
-            // Удаляем временный файл
             if (tempFile != null) {
                 try {
                     Files.deleteIfExists(tempFile);

@@ -53,11 +53,23 @@ public class Client {
     @Builder.Default
     private List<Order> orders = new ArrayList<>();
 
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Deal> deals = new ArrayList<>();
+
     public void addOrder(Order order) {
         orders.add(order);
     }
 
     public void removeOrder(Order order) {
         orders.remove(order);
+    }
+
+    public void addDeal(Deal deal) {
+        deals.add(deal);
+    }
+
+    public void removeDeal(Deal deal) {
+        deals.remove(deal);
     }
 }

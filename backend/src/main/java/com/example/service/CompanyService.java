@@ -20,4 +20,6 @@ public interface CompanyService {
     List<PropertyResponse> getProperties(Long companyId);
     List<OrderDto> getOrders(Long companyId);
     List<ClientDto> getClients(Long companyId);
+    Company removeProperty(Long companyId, Long propertyId);
+    Company removeOrder(Long companyId, Long orderId);
 }

@@ -9,6 +9,5 @@ import java.util.List;
 @Repository
 public interface PropertyRepository extends JpaRepository<Property, Long> {
     boolean existsByCadastralNumberAndCompanyId(Long cadastralNumber, Long companyId);
-    Property findById(long id);
     List<Property> findAllByCadastralNumberInAndCompanyId(List<Long> cadastralNumbers, Long companyId);
 }
