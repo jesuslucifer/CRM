@@ -2,6 +2,7 @@ package com.example.service.impl;
 
 import com.example.exception.*;
 import com.example.model.Client;
+import com.example.model.dto.request.ClientCreateRequest;
 import com.example.repository.ClientRepository;
 import com.example.service.ClientService;
 import lombok.RequiredArgsConstructor;
@@ -41,5 +42,31 @@ public class ClientServiceImpl implements ClientService {
     public Client getById(Long id) {
         return clientRepository.findById(id)
                 .orElseThrow(ClientNotFoundException::new);
+    }
+
+    @Override
+    public Client update(Long id, ClientCreateRequest request) {
+        Client client = getById(id);
+
+        client.setFirstName(request.getFirstName());
+        client.setLastName(request.getLastName());
+
+        if (!clientRepository.existsByPhoneAndCompanyId(
+                request.getPhone(),
+                client.getCompany().getId())) {
+            client.setPhone(request.getPhone());
+        }
+
+        if (!clientRepository.existsByEmailAndCompanyId(
+                request.getEmail(),
+                client.getCompany().getId())) {
+            client.setEmail(request.getEmail());
+        }
+
+        client.setClientType(request.getClientType());
+        client.setClientSource(request.getClientSource());
+        client.setNotes(request.getNotes());
+
+        return save(client);
     }
 }

@@ -1,12 +1,12 @@
 package com.example.controller;
 
+import com.example.model.dto.request.ClientCreateRequest;
+import com.example.model.dto.response.ClientDto;
 import com.example.model.dto.response.ClientWithOrdersResponse;
 import com.example.service.ClientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,5 +17,11 @@ public class ClientController {
     @RequestMapping("/{id}")
     public ResponseEntity<?> getClient(@PathVariable Long id) {
         return ResponseEntity.ok(new ClientWithOrdersResponse(clientService.getById(id)));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateClient(@PathVariable Long id,
+                                          @RequestBody ClientCreateRequest request) {
+        return ResponseEntity.ok(new ClientDto(clientService.update(id, request)));
     }
 }
