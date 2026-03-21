@@ -3,6 +3,9 @@ package com.example.model.dto.response;
 import com.example.model.User;
 import lombok.Data;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Data
 public class UserDto {
     private Long id;
@@ -11,6 +14,7 @@ public class UserDto {
     private String avatarUrl;
     private String name;
     private String lastName;
+    private List<CompanyForUserDto> companies;
 
     public UserDto() {}
 
@@ -21,5 +25,9 @@ public class UserDto {
         this.avatarUrl = user.getAvatarUrl();
         this.name = user.getName();
         this.lastName = user.getLastName();
+        this.companies = user.getCompanyEmployees()
+                .stream()
+                .map(ce -> new CompanyForUserDto(ce.getCompany(), ce.getRole()))
+                .collect(Collectors.toList());
     }
 }

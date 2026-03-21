@@ -1,23 +1,35 @@
 package com.example.controller;
 
+import com.example.model.PasswordResetToken;
 import com.example.model.User;
+import com.example.model.dto.request.EmailPasswordUsernameRequest;
+import com.example.model.dto.request.PasswordRequest;
+import com.example.model.dto.response.ErrorResponse;
 import com.example.model.dto.response.SuccessResponse;
 import com.example.model.dto.response.UserDto;
 import com.example.security.SecurityUtil;
-import com.example.service.UserService;
+import com.example.service.*;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Optional;
+
+@Slf4j
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
-
     private final UserService userService;
+    private final PasswordResetTokenService passwordResetTokenService;
+    private final EmailService emailService;
+    private final TokenService tokenService;
+    private final JwtService jwtService;
 
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser() {
@@ -59,5 +71,106 @@ public class UserController {
         userService.updateNameAndLastName(id, userDto);
 
         return ResponseEntity.ok(new UserDto(userService.getById(id)));
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody EmailPasswordUsernameRequest email, HttpServletRequest request) {
+        try {
+            Optional<User> userOptional = userService.findByEmail(email.getEmail());
+
+            if (userOptional.isPresent()) {
+                User user = userOptional.get();
+
+                passwordResetTokenService.deletePasswordResetTokenByUser(user);
+
+                PasswordResetToken passwordResetToken = passwordResetTokenService.create(user);
+
+                emailService.sendPasswordResetToken(email.getEmail(), getAppUrl(request), user, passwordResetToken.getToken());
+            }
+
+            return ResponseEntity.ok(new SuccessResponse(
+                    "Инструкция к восстановлению пароля отправлена на ваш email",
+                    HttpStatus.OK
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(
+                    "Error",
+                    HttpStatus.BAD_REQUEST
+            ));
+        }
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(@RequestBody PasswordRequest passwordRequest) {
+        try {
+            User user = userService.getById(SecurityUtil.getCurrentUser().getId());
+
+            userService.changePasswordWithConfirmPassword(user,
+                    passwordRequest.getNewPassword(),
+                    passwordRequest.getCurrentPassword());
+
+            tokenService.removeToken(user);
+
+            return ResponseEntity.ok(new SuccessResponse(
+                    "Пароль изменен",
+                    HttpStatus.OK
+            ));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorResponse(
+                    e.getMessage(),
+                    HttpStatus.BAD_REQUEST
+            ));
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestParam String token, @RequestBody PasswordRequest password) {
+        try {
+            PasswordResetToken passwordResetToken = passwordResetTokenService.getPasswordResetToken(token);
+
+            if (passwordResetToken.isExpired()) {
+                return ResponseEntity.badRequest().body(new ErrorResponse(
+                        "Токен истек",
+                        HttpStatus.BAD_REQUEST
+                ));
+            }
+            User user = passwordResetToken.getUser();
+
+            userService.changePassword(user, password.getCurrentPassword());
+
+            passwordResetTokenService.deletePasswordResetToken(token);
+
+            tokenService.removeToken(user);
+
+            return ResponseEntity.ok(new SuccessResponse(
+                    "Пароль изменен",
+                    HttpStatus.OK
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(
+                    "Error",
+                    HttpStatus.BAD_REQUEST
+            ));
+        }
+    }
+
+    @PostMapping("/change-email")
+    public ResponseEntity<?> changeEmail(@RequestBody EmailPasswordUsernameRequest request) {
+        User user = userService.changeEmail(
+                SecurityUtil.getCurrentUser().getId(),
+                request.getEmail(),
+                request.getPassword());
+
+        return ResponseEntity.ok(new UserDto(user));
+    }
+
+    private String getAppUrl(HttpServletRequest request) {
+        return request.getScheme() +
+                "://" +
+                request.getServerName() +
+                ":" +
+                request.getServerPort() +
+                request.getContextPath();
     }
 }

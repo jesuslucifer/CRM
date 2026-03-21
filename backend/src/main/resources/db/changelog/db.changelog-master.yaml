@@ -11,3 +11,13 @@ databaseChangeLog:
       file: db/changelog/18.09.2025/create-table-company-employees.yaml
   - include:
       file: db/changelog/18.09.2025/drop-access-token-in-tokens.yaml
+  - include:
+      file: db/changelog/23.09.2025/create-table-password-reset-token.yaml
+  - include:
+      file: db/changelog/11.03.2026/create-table-properties.yaml
+  - include:
+      file: db/changelog/17.03.2026/create-table-orders.yaml
+  - include:
+      file: db/changelog/17.03.2026/create-table-clients.yaml
+  - include:
+      file: db/changelog/18.03.2026/create-table-deals.yaml

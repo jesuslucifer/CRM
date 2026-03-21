@@ -1,30 +1,37 @@
 package com.example.controller;
 
-import com.example.model.Company;
-import com.example.model.EmployeeRole;
-import com.example.model.User;
-import com.example.model.dto.request.CompanyEmployeeRequest;
-import com.example.model.dto.request.CreateCompanyRequest;
-import com.example.model.dto.response.CompanyDto;
-import com.example.model.dto.response.SuccessResponse;
+import com.example.model.*;
+import com.example.model.dto.request.*;
+import com.example.model.dto.response.*;
+import com.example.model.enums.EmployeeRole;
 import com.example.security.SecurityUtil;
-import com.example.service.CompanyService;
-import com.example.service.UserService;
+import com.example.service.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+
+@Slf4j
 @RestController
 @RequestMapping("/api/company")
 @RequiredArgsConstructor
 public class CompanyController {
     private final CompanyService companyService;
     private final UserService userService;
+    private final PropertyService propertyService;
+    private final ClientService clientService;
+    private final OrderService orderService;
+    private final DealService dealService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> create(@RequestBody CreateCompanyRequest request) {
+    public ResponseEntity<?> create(@RequestBody CompanyCreateRequest request) {
         User user = SecurityUtil.getCurrentUser();
 
         Company company = Company.builder()
@@ -37,18 +44,145 @@ public class CompanyController {
 
         companyService.create(company);
 
-        return ResponseEntity.ok(new CompanyDto(company));
+        return ResponseEntity.ok(new CompanyDetailDto(company));
+    }
+
+    @PostMapping("/{id}/property/create")
+    public ResponseEntity<?> createProperty(
+            @PathVariable Long id,
+            @RequestBody PropertyCreateRequest request) {
+        Company company = companyService.getById(id);
+
+        Property property = Property.builder()
+                .cadastralNumber(request.getCadastralNumber())
+                .company(company)
+                .title(request.getTitle())
+                .description(request.getDescription())
+                .propertyType(request.getPropertyType())
+                .dealType(request.getDealType())
+                .address(request.getAddress())
+                .city(request.getCity())
+                .district(request.getDistrict())
+                .price(request.getPrice())
+                .salePrice(request.getSalePrice())
+                .area(request.getArea())
+                .rooms(request.getRooms())
+                .floor(request.getFloor())
+                .totalFloors(request.getTotalFloors())
+                .yearBuilt(request.getYearBuilt())
+                .status(request.getPropertyStatus())
+                .build();
+
+        propertyService.create(property);
+
+        company.addProperty(property);
+
+        return ResponseEntity.ok(new PropertyResponse(property, company));
+    }
+
+    @PostMapping("/{id}/order/create")
+    public ResponseEntity<?> createOrder(
+            @PathVariable Long id,
+            @RequestBody OrderCreateRequest request) {
+        Company company = companyService.getById(id);
+        Client client = clientService.getById(request.getClientId());
+
+        Order order = Order.builder()
+                .company(company)
+                .client(client)
+                .city(request.getCity())
+                .dealType(request.getDealType())
+                .propertyType(request.getPropertyType())
+                .description(request.getDescription())
+                .build();
+
+        orderService.create(order);
+
+        client.addOrder(order);
+
+        return ResponseEntity.ok(new OrderDto(order));
+    }
+
+    @PostMapping("/{id}/client/create")
+    public ResponseEntity<?> createClient(
+            @PathVariable Long id,
+            @RequestBody ClientCreateRequest request) {
+        Company company = companyService.getById(id);
+
+        Client client = Client.builder()
+                .company(company)
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .phone(request.getPhone())
+                .email(request.getEmail())
+                .clientType(request.getClientType())
+                .clientSource(request.getClientSource())
+                .notes(request.getNotes())
+                .build();
+
+        clientService.create(client);
+
+        company.addClient(client);
+
+        return ResponseEntity.ok(new ClientDto(client));
+    }
+
+    @PostMapping("/{id}/deal/create")
+    public ResponseEntity<?> createDeal(
+            @PathVariable Long id,
+            @RequestBody DealCreateRequest request) {
+        Company company = companyService.getById(id);
+        Client client = clientService.getById(request.getClientId());
+        Property property = propertyService.getById(request.getPropertyId());
+        User agent = userService.getById(request.getAgentId());
+
+        Deal deal = Deal.builder()
+                .company(company)
+                .client(client)
+                .property(property)
+                .agent(agent)
+                .status(request.getStatus())
+                .price(request.getPrice())
+                .build();
+
+        dealService.create(deal);
+
+        company.addDeal(deal);
+        client.addDeal(deal);
+        agent.addDeal(deal);
+
+        return ResponseEntity.ok(new SuccessResponse(
+                "Сделка создана",
+                HttpStatus.OK
+        ));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
         Company company = companyService.getById(id);
 
-        return ResponseEntity.ok(new CompanyDto(company));
+        return ResponseEntity.ok(new CompanyDetailDto(company));
+    }
+
+    @GetMapping("/{id}/properties")
+    public ResponseEntity<?> getProperties(@PathVariable Long id) {
+        return ResponseEntity.ok(companyService.getProperties(id));
+    }
+
+    @GetMapping("/{id}/orders")
+    public ResponseEntity<?> getOrders(@PathVariable Long id) {
+        return ResponseEntity.ok(companyService.getOrders(id));
+    }
+
+    @GetMapping("/{id}/clients")
+    public ResponseEntity<?> getClients(@PathVariable Long id) {
+        return ResponseEntity.ok(companyService.getClients(id));
     }
 
     @PutMapping("/{id}/avatar")
-    public SuccessResponse updateAvatarUrl(@RequestParam("file") MultipartFile file, @PathVariable Long id) {
+    public SuccessResponse updateAvatarUrl(
+            @RequestParam("file") MultipartFile file,
+            @PathVariable Long id) {
         companyService.updateAvatarUrl(id,file);
 
         return new SuccessResponse(
@@ -57,21 +191,96 @@ public class CompanyController {
         );
     }
 
+//    @PutMapping("/{companyId}/employees")
+//    public ResponseEntity<?> addEmployee(@PathVariable Long companyId,
+//                                         @RequestBody CompanyEmployeeRequest companyEmployeeRequest) {
+//        companyService.addEmployee(companyEmployeeRequest.getEmployeeId(),
+//                companyId,
+//                companyEmployeeRequest.getEmployeeRole());
+//
+//        return ResponseEntity.ok(new CompanyDto(companyService.getById(companyId)));
+//    }
+
     @PutMapping("/{companyId}/employees")
     public ResponseEntity<?> addEmployee(@PathVariable Long companyId,
                                          @RequestBody CompanyEmployeeRequest companyEmployeeRequest) {
-        companyService.addEmployee(companyEmployeeRequest.getEmployeeId(),
+        companyService.addEmployee(companyEmployeeRequest.getEmail(),
                 companyId,
                 companyEmployeeRequest.getEmployeeRole());
 
-        return ResponseEntity.ok(new CompanyDto(companyService.getById(companyId)));
+        return ResponseEntity.ok(new CompanyDetailDto(companyService.getById(companyId)));
     }
 
     @DeleteMapping("/{companyId}/{employeeId}/employees")
     public ResponseEntity<?> removeEmployee(@PathVariable Long companyId,
                                             @PathVariable Long employeeId) {
-        companyService.removeEmployee( employeeId, companyId);
+        companyService.removeEmployee(employeeId, companyId);
 
-        return ResponseEntity.ok(new CompanyDto(companyService.getById(companyId)));
+        return ResponseEntity.ok(new CompanyDetailDto(companyService.getById(companyId)));
+    }
+
+    @DeleteMapping("/{companyId}/{propertyId}/property")
+    public ResponseEntity<?> removeProperty(
+            @PathVariable Long companyId,
+            @PathVariable Long propertyId) {
+        companyService.removeProperty(companyId, propertyId);
+
+        return ResponseEntity.ok(companyService.getProperties(companyId));
+    }
+
+    @DeleteMapping("/{companyId}/{orderId}/order")
+    public ResponseEntity<?> removeOrder(
+            @PathVariable Long companyId,
+            @PathVariable Long orderId) {
+        companyService.removeOrder(companyId, orderId);
+
+        return ResponseEntity.ok(new SuccessResponse(
+                "Заявка удалена",
+                HttpStatus.OK
+        ));
+    }
+
+    @PostMapping("/{id}/import-from-csv")
+    public ResponseEntity<?> importFromCsvNio(
+            @RequestParam("file") MultipartFile file,
+            @PathVariable("id") Long companyId) {
+
+        log.info("Получен запрос на импорт CSV файла (NIO): {}, companyId: {}",
+                file.getOriginalFilename(), companyId);
+
+        Path tempFile = null;
+
+        try {
+            tempFile = Files.createTempFile("import_", "_" + file.getOriginalFilename());
+
+            file.transferTo(tempFile.toFile());
+
+            log.debug("Временный файл создан (NIO): {}", tempFile.toAbsolutePath());
+
+            List<Property> importedProperties = propertyService.importFromCsv(
+                    tempFile.toAbsolutePath().toString(),
+                    companyId
+            );
+
+            return ResponseEntity.ok("Импорт успешно завершен");
+
+        } catch (IOException e) {
+            log.error("Ошибка при обработке файла (NIO): {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ImportResult.error("Ошибка при обработке файла: " + e.getMessage()));
+        } catch (Exception e) {
+            log.error("Неожиданная ошибка при импорте (NIO): {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ImportResult.error("Внутренняя ошибка сервера: " + e.getMessage()));
+        } finally {
+            if (tempFile != null) {
+                try {
+                    Files.deleteIfExists(tempFile);
+                    log.debug("Временный файл удален (NIO): {}", tempFile.toAbsolutePath());
+                } catch (IOException e) {
+                    log.warn("Не удалось удалить временный файл (NIO): {}", tempFile.toAbsolutePath(), e);
+                }
+            }
+        }
     }
 }

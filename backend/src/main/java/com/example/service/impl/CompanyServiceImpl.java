@@ -2,16 +2,27 @@ package com.example.service.impl;
 
 import com.example.exception.*;
 import com.example.model.Company;
-import com.example.model.EmployeeRole;
+import com.example.model.Order;
+import com.example.model.Property;
+import com.example.model.dto.response.ClientDto;
+import com.example.model.dto.response.OrderDto;
+import com.example.model.enums.EmployeeRole;
 import com.example.model.User;
+import com.example.model.dto.response.PropertyResponse;
 import com.example.repository.CompanyEmployeeRepository;
 import com.example.repository.CompanyRepository;
+import com.example.repository.PropertyRepository;
 import com.example.repository.UserRepository;
 import com.example.service.CompanyService;
 import com.example.service.LocalStorageService;
+import com.example.service.OrderService;
+import com.example.service.PropertyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +31,9 @@ public class CompanyServiceImpl implements CompanyService {
     private final LocalStorageService localStorageService;
     private final UserRepository userRepository;
     private final CompanyEmployeeRepository companyEmployeeRepository;
+    private final PropertyRepository propertyRepository;
+    private final PropertyService propertyService;
+    private final OrderService orderService;
 
     @Override
     public Company save(Company company) {
@@ -71,7 +85,24 @@ public class CompanyServiceImpl implements CompanyService {
                 .orElseThrow(UserNotFoundException::new);
 
         if (companyEmployeeRepository.existsByCompanyIdAndUserId(companyId, userId)) {
-            throw new EmployeeAlreadyExistsInCompanyException();
+            throw new EmployeeAlreadyExistsException();
+        }
+
+        company.addEmployee(user, role);
+
+        return companyRepository.save(company);
+    }
+
+    @Override
+    public Company addEmployee(String email, Long companyId, EmployeeRole role) {
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(CompanyNotFoundException::new);
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(UserNotFoundException::new);
+
+        if (companyEmployeeRepository.existsByCompanyIdAndUserEmail(companyId, email)) {
+            throw new EmployeeAlreadyExistsException();
         }
 
         company.addEmployee(user, role);
@@ -88,10 +119,65 @@ public class CompanyServiceImpl implements CompanyService {
                 .orElseThrow(UserNotFoundException::new);
 
         if (!companyEmployeeRepository.existsByCompanyIdAndUserId(companyId, userId)) {
-            throw new EmployeeNotFoundInCompanyException();
+            throw new EmployeeNotFoundException();
         }
 
         company.removeEmployee(user);
+
+        return companyRepository.save(company);
+    }
+
+    @Override
+    public List<PropertyResponse> getProperties(Long companyId) {
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(CompanyNotFoundException::new);
+
+        return company.getProperties()
+                .stream()
+                .map(PropertyResponse::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OrderDto> getOrders(Long companyId) {
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(CompanyNotFoundException::new);
+
+        return company.getOrders()
+                .stream()
+                .map(OrderDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ClientDto> getClients(Long companyId) {
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(CompanyNotFoundException::new);
+
+        return company.getClients()
+                .stream()
+                .map(ClientDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Company removeProperty(Long companyId, Long propertyId) {
+        Company company = getById(companyId);
+
+        Property property = propertyService.getById(propertyId);
+
+        company.removeProperty(property);
+
+        return companyRepository.save(company);
+    }
+
+    @Override
+    public Company removeOrder(Long companyId, Long orderId) {
+        Company company = getById(companyId);
+
+        Order order = orderService.getById(orderId);
+
+        company.removeOrder(order);
 
         return companyRepository.save(company);
     }

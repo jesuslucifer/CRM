@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
     User save(User user);
@@ -20,4 +21,8 @@ public interface UserService {
     UserDetails loadUserByUsername(String usernameOrEmail);
     UserDetailsService userDetailsService();
     User updateNameAndLastName(Long id, UserDto userDto);
+    Optional<User> findByEmail(String email);
+    User changePassword(User user, String newPassword);
+    User changeEmail(Long id, String newEmail, String password);
+    User changePasswordWithConfirmPassword(User user, String newPassword, String confirmPassword);
 }

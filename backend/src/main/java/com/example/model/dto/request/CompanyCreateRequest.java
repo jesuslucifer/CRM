@@ -5,6 +5,6 @@ import lombok.RequiredArgsConstructor;
 
 @Data
 @RequiredArgsConstructor
-public class CreateCompanyRequest {
+public class CompanyCreateRequest {
     String name;
 }
