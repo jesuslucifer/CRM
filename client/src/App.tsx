@@ -14,7 +14,7 @@ import { ToastContainer } from 'react-toastify';
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import SideBar from "./layout/SideBar";
 import ProfilePage from "./pages/profile/ProfilePage";
-import ContactsListPage from "./pages/contacts/ContactsListPage";
+import ContactsListPage from "./pages/clients/ClientsListPage";
 
 
 export default function App() {

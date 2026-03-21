@@ -40,8 +40,8 @@ export default function CompanyHeader() {
               // { to: "employees", label: "Сотрудники", icon: Users },
               { to: "crm/deals", label: "Сделка", icon: Handshake },
               { to: "crm/kanban", label: "Kanban", icon: KanbanSquare },
-              { to: "crm/leads", label: "Лиды", icon: Users },
-              { to: "crm/contacts", label: "Контакты", icon: Contact },
+              { to: "crm/leads", label: "Заявки", icon: Users },
+              { to: "crm/clients", label: "Клиенты", icon: Contact },
             ].map(({ to, label, icon: Icon }) => (
               <NavLink
                 key={to}

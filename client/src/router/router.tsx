@@ -7,7 +7,7 @@ import DealsListPage from "@/pages/deals/DealsListPage"
 import DealsKanbanPage from "@/pages/deals/DealsKanbanPage"
 import DealDetailsPage from "@/pages/deals/DealsDetailsPage"
 import LeadsListPage from "@/pages/leadsList/LeadsListPage"
-import ContactsListPage from "@/pages/contacts/ContactsListPage"
+import ContactsListPage from "@/pages/clients/ClientsListPage"
 import ProfilePage from "@/pages/profile/ProfilePage"
 import SettingsPage from "@/pages/settings/SettingsPage"
 
@@ -78,7 +78,7 @@ export const router = createBrowserRouter([
                             { path: "kanban", element: <DealsKanbanPage /> },
                             { path: "deals/:id", element: <DealDetailsPage /> },
                             { path: "leads", element: <LeadsListPage /> },
-                            { path: "contacts", element: <ContactsListPage /> },
+                            { path: "clients", element: <ContactsListPage /> },
 
                         ]
                     },

@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 export function useCreateProperty(id: number) {
     const qc = useQueryClient();
     const { mutate, isPending } = useMutation({
-        mutationKey: ['create-property'],
+        mutationKey: ['property'],
         mutationFn: (data: ICreateProperty) => PropertyService.createProperty(id, data),
         onSuccess: () => {
             qc.invalidateQueries({ queryKey: ['property', id] });
