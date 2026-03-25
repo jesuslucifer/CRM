@@ -15,7 +15,7 @@ import java.nio.file.StandardCopyOption;
 @Service
 public class LocalStorageServiceImpl implements LocalStorageService {
     @Value("${backend.upload.dir}")
-    private String uploadDir;
+    private String uploadDirectory;
 
     @Value("${server.address:localhost}")
     private String serverAddress;
@@ -26,7 +26,7 @@ public class LocalStorageServiceImpl implements LocalStorageService {
     @Override
     public String uploadFile(MultipartFile file, String fileName) {
         try {
-            Path path = Paths.get(uploadDir);
+            Path path = Paths.get(uploadDirectory);
 
             if (!Files.exists(path)) {
                 Files.createDirectories(path);
@@ -39,5 +39,9 @@ public class LocalStorageServiceImpl implements LocalStorageService {
         } catch (IOException e) {
             throw new UploadFileException();
         }
+    }
+
+    @Override
+    public void createDirectory(String path) {
     }
 }

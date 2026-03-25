@@ -4,4 +4,5 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface LocalStorageService {
     String uploadFile(MultipartFile file, String fileName);
+    void createDirectory(String path);
 }

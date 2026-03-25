@@ -2,6 +2,7 @@ package com.example.service.impl;
 
 import com.example.exception.*;
 import com.example.model.User;
+import com.example.model.dto.request.UserUpdateRequest;
 import com.example.model.dto.response.UserDto;
 import com.example.repository.UserRepository;
 import com.example.service.LocalStorageService;
@@ -97,7 +98,6 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
         user.setAvatarUrl(fileUrl);
         userRepository.save(user);
-
     }
 
     @Override
@@ -106,7 +106,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public User updateNameAndLastName(Long id, UserDto userDto) {
+    public User update(Long id, UserUpdateRequest userDto) {
         User user = getById(id);
 
         if (userDto.getName() != null) {
@@ -115,6 +115,13 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
         if (userDto.getLastName() != null) {
             user.setLastName(userDto.getLastName());
+        }
+
+        if (userDto.getUsername() != null) {
+            if (userRepository.existsByUsername(userDto.getUsername())) {
+                throw new UsernameAlreadyExistsException();
+            }
+            user.setUsername(userDto.getUsername());
         }
 
         return userRepository.save(user);

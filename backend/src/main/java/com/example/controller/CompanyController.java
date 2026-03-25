@@ -13,11 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-
 @Slf4j
 @RestController
 @RequestMapping("/api/company")
@@ -45,86 +40,6 @@ public class CompanyController {
         companyService.create(company);
 
         return ResponseEntity.ok(new CompanyDetailDto(company));
-    }
-
-    @PostMapping("/{id}/property/create")
-    public ResponseEntity<?> createProperty(
-            @PathVariable Long id,
-            @RequestBody PropertyCreateRequest request) {
-        Company company = companyService.getById(id);
-
-        Property property = Property.builder()
-                .cadastralNumber(request.getCadastralNumber())
-                .company(company)
-                .title(request.getTitle())
-                .description(request.getDescription())
-                .propertyType(request.getPropertyType())
-                .dealType(request.getDealType())
-                .address(request.getAddress())
-                .city(request.getCity())
-                .district(request.getDistrict())
-                .price(request.getPrice())
-                .salePrice(request.getSalePrice())
-                .area(request.getArea())
-                .rooms(request.getRooms())
-                .floor(request.getFloor())
-                .totalFloors(request.getTotalFloors())
-                .yearBuilt(request.getYearBuilt())
-                .status(request.getPropertyStatus())
-                .build();
-
-        propertyService.create(property);
-
-        company.addProperty(property);
-
-        return ResponseEntity.ok(new PropertyResponse(property, company));
-    }
-
-    @PostMapping("/{id}/order/create")
-    public ResponseEntity<?> createOrder(
-            @PathVariable Long id,
-            @RequestBody OrderCreateRequest request) {
-        Company company = companyService.getById(id);
-        Client client = clientService.getById(request.getClientId());
-
-        Order order = Order.builder()
-                .company(company)
-                .client(client)
-                .city(request.getCity())
-                .dealType(request.getDealType())
-                .propertyType(request.getPropertyType())
-                .description(request.getDescription())
-                .build();
-
-        orderService.create(order);
-
-        client.addOrder(order);
-
-        return ResponseEntity.ok(new OrderDto(order));
-    }
-
-    @PostMapping("/{id}/client/create")
-    public ResponseEntity<?> createClient(
-            @PathVariable Long id,
-            @RequestBody ClientCreateRequest request) {
-        Company company = companyService.getById(id);
-
-        Client client = Client.builder()
-                .company(company)
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
-                .phone(request.getPhone())
-                .email(request.getEmail())
-                .clientType(request.getClientType())
-                .clientSource(request.getClientSource())
-                .notes(request.getNotes())
-                .build();
-
-        clientService.create(client);
-
-        company.addClient(client);
-
-        return ResponseEntity.ok(new ClientDto(client));
     }
 
     @PostMapping("/{id}/deal/create")
@@ -162,21 +77,6 @@ public class CompanyController {
         Company company = companyService.getById(id);
 
         return ResponseEntity.ok(new CompanyDetailDto(company));
-    }
-
-    @GetMapping("/{id}/properties")
-    public ResponseEntity<?> getProperties(@PathVariable Long id) {
-        return ResponseEntity.ok(companyService.getProperties(id));
-    }
-
-    @GetMapping("/{id}/orders")
-    public ResponseEntity<?> getOrders(@PathVariable Long id) {
-        return ResponseEntity.ok(companyService.getOrders(id));
-    }
-
-    @GetMapping("/{id}/clients")
-    public ResponseEntity<?> getClients(@PathVariable Long id) {
-        return ResponseEntity.ok(companyService.getClients(id));
     }
 
     @PutMapping("/{id}/avatar")
@@ -217,70 +117,5 @@ public class CompanyController {
         companyService.removeEmployee(employeeId, companyId);
 
         return ResponseEntity.ok(new CompanyDetailDto(companyService.getById(companyId)));
-    }
-
-    @DeleteMapping("/{companyId}/{propertyId}/property")
-    public ResponseEntity<?> removeProperty(
-            @PathVariable Long companyId,
-            @PathVariable Long propertyId) {
-        companyService.removeProperty(companyId, propertyId);
-
-        return ResponseEntity.ok(companyService.getProperties(companyId));
-    }
-
-    @DeleteMapping("/{companyId}/{orderId}/order")
-    public ResponseEntity<?> removeOrder(
-            @PathVariable Long companyId,
-            @PathVariable Long orderId) {
-        companyService.removeOrder(companyId, orderId);
-
-        return ResponseEntity.ok(new SuccessResponse(
-                "Заявка удалена",
-                HttpStatus.OK
-        ));
-    }
-
-    @PostMapping("/{id}/import-from-csv")
-    public ResponseEntity<?> importFromCsvNio(
-            @RequestParam("file") MultipartFile file,
-            @PathVariable("id") Long companyId) {
-
-        log.info("Получен запрос на импорт CSV файла (NIO): {}, companyId: {}",
-                file.getOriginalFilename(), companyId);
-
-        Path tempFile = null;
-
-        try {
-            tempFile = Files.createTempFile("import_", "_" + file.getOriginalFilename());
-
-            file.transferTo(tempFile.toFile());
-
-            log.debug("Временный файл создан (NIO): {}", tempFile.toAbsolutePath());
-
-            List<Property> importedProperties = propertyService.importFromCsv(
-                    tempFile.toAbsolutePath().toString(),
-                    companyId
-            );
-
-            return ResponseEntity.ok("Импорт успешно завершен");
-
-        } catch (IOException e) {
-            log.error("Ошибка при обработке файла (NIO): {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ImportResult.error("Ошибка при обработке файла: " + e.getMessage()));
-        } catch (Exception e) {
-            log.error("Неожиданная ошибка при импорте (NIO): {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ImportResult.error("Внутренняя ошибка сервера: " + e.getMessage()));
-        } finally {
-            if (tempFile != null) {
-                try {
-                    Files.deleteIfExists(tempFile);
-                    log.debug("Временный файл удален (NIO): {}", tempFile.toAbsolutePath());
-                } catch (IOException e) {
-                    log.warn("Не удалось удалить временный файл (NIO): {}", tempFile.toAbsolutePath(), e);
-                }
-            }
-        }
     }
 }

@@ -18,9 +18,14 @@ import com.example.service.LocalStorageService;
 import com.example.service.OrderService;
 import com.example.service.PropertyService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,9 +36,10 @@ public class CompanyServiceImpl implements CompanyService {
     private final LocalStorageService localStorageService;
     private final UserRepository userRepository;
     private final CompanyEmployeeRepository companyEmployeeRepository;
-    private final PropertyRepository propertyRepository;
     private final PropertyService propertyService;
     private final OrderService orderService;
+    @Value("${backend.upload.dir}")
+    private String uploadDirectory;
 
     @Override
     public Company save(Company company) {
@@ -47,7 +53,19 @@ public class CompanyServiceImpl implements CompanyService {
             throw new CompanyNameAlreadyExistsException();
         }
 
-        return save(company);
+        Company createdCompany = companyRepository.save(company);
+
+        try {
+            String path = uploadDirectory +
+                    "/companies/" + createdCompany.getName()
+                    + "_" + createdCompany.getId() + "/";
+            Files.createDirectories(Path.of(path));
+            System.out.println(path);
+        } catch (IOException e) {
+            throw new RuntimeException(e); //TODO EXCEPTION
+        }
+
+        return createdCompany;
     }
 
     @Override

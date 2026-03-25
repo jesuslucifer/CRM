@@ -4,6 +4,7 @@ import com.example.model.PasswordResetToken;
 import com.example.model.User;
 import com.example.model.dto.request.EmailPasswordUsernameRequest;
 import com.example.model.dto.request.PasswordRequest;
+import com.example.model.dto.request.UserUpdateRequest;
 import com.example.model.dto.response.ErrorResponse;
 import com.example.model.dto.response.SuccessResponse;
 import com.example.model.dto.response.UserDto;
@@ -39,7 +40,7 @@ public class UserController {
     }
 
     @PostMapping("/avatar")
-    public ResponseEntity<?> updateAvatarUrl(@RequestParam("file") MultipartFile avatarUrlRequest) {
+    public ResponseEntity<?> updateAvatarUrl(@RequestParam("avatar") MultipartFile avatarUrlRequest) {
         userService.updateAvatarUrl(SecurityUtil.getCurrentUser().getId(), avatarUrlRequest);
 
         return ResponseEntity.ok(new SuccessResponse(
@@ -66,9 +67,9 @@ public class UserController {
     @PutMapping("/{id}/name")
     public ResponseEntity<UserDto> updateNameAndLastName(
             @PathVariable Long id,
-            @RequestBody UserDto userDto) {
+            @RequestBody UserUpdateRequest userDto) {
 
-        userService.updateNameAndLastName(id, userDto);
+        userService.update(id, userDto);
 
         return ResponseEntity.ok(new UserDto(userService.getById(id)));
     }

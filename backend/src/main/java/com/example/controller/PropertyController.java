@@ -6,6 +6,7 @@ import com.example.service.PropertyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/property")
@@ -19,11 +20,17 @@ public class PropertyController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateProperty(@PathVariable Long id, @RequestBody PropertyCreateRequest request) {
+    public ResponseEntity<?> updateProperty(@PathVariable Long id,
+                                            @RequestBody PropertyCreateRequest request) {
         propertyService.update(id, request);
 
         return okDto(id);
     }
+
+//    public ResponseEntity<?> addPhoto(@PathVariable Long id,
+//                                      @RequestParam("file") MultipartFile file) {
+//
+//    }
 
     private ResponseEntity<?> okDto(Long id) {
         return ResponseEntity.ok(new PropertyResponse(propertyService.getById(id)));

@@ -8,11 +8,13 @@ import com.example.model.enums.PropertyStatus;
 import com.example.model.enums.PropertyType;
 import com.example.repository.CompanyRepository;
 import com.example.repository.PropertyRepository;
+import com.example.service.LocalStorageService;
 import com.example.service.PropertyService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -30,6 +32,7 @@ import java.util.stream.Collectors;
 public class PropertyServiceImpl implements PropertyService {
     private final PropertyRepository propertyRepository;
     private final CompanyRepository companyRepository;
+    private final LocalStorageService localStorageService;
 
     @Override
     public Property save(Property property) {
@@ -156,6 +159,24 @@ public class PropertyServiceImpl implements PropertyService {
         }
 
         return importedProperties;
+    }
+
+    @Override
+    public Property addPhoto(Long id, MultipartFile file) {
+        Property property = getById(id);
+
+        if (file.isEmpty()) {
+            throw new UploadFileIsEmptyException();
+        }
+
+        if (!file.getContentType().startsWith("image")) {
+            throw new InvalidFileTypeException();
+        }
+
+        String filename = "property_" + property.getId() + "_" + property.getTitle();
+        String fileUrl = localStorageService.uploadFile(file, filename);
+
+        return propertyRepository.save(property);
     }
 
     private Property toProperty(String[] split, Long companyId) {
