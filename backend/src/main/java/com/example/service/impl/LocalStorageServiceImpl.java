@@ -42,6 +42,33 @@ public class LocalStorageServiceImpl implements LocalStorageService {
     }
 
     @Override
-    public void createDirectory(String path) {
+    public String createCompanyDirectory(Long id) {
+        try {
+            String path = uploadDirectory +
+                    "/companies/" + "company_"
+                    + id + "/";
+            Files.createDirectories(Path.of(path));
+            Files.createDirectories(Path.of(path + "docs/"));
+
+            return path;
+        } catch (IOException e) {
+            throw new RuntimeException(e); //TODO EXCEPTION
+        }
+    }
+
+    @Override
+    public String createPropertyDirectory(Long propertyId, Long companyId) {
+        try {
+            String path = uploadDirectory +
+                    "/companies/" + "company_" + companyId
+                    + "/property_" + propertyId + "/";
+            Files.createDirectories(Path.of(path));
+            Files.createDirectories(Path.of(path + "docs/"));
+            Files.createDirectories(Path.of(path + "images/"));
+
+            return path;
+        } catch (IOException e) {
+            throw new RuntimeException(e); //TODO EXCEPTION
+        }
     }
 }

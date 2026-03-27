@@ -45,7 +45,12 @@ public class PropertyServiceImpl implements PropertyService {
             throw new PropertyAlreadyExistsException();
         }
 
-        return save(property);
+        Property createProperty = save(property);
+
+        localStorageService.createPropertyDirectory(
+                property.getId(), property.getCompany().getId());
+
+        return createProperty;
     }
 
     @Override
@@ -162,7 +167,7 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     @Override
-    public Property addPhoto(Long id, MultipartFile file) {
+    public Property addImage(Long id, MultipartFile file) {
         Property property = getById(id);
 
         if (file.isEmpty()) {

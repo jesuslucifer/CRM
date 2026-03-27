@@ -55,15 +55,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         Company createdCompany = companyRepository.save(company);
 
-        try {
-            String path = uploadDirectory +
-                    "/companies/" + createdCompany.getName()
-                    + "_" + createdCompany.getId() + "/";
-            Files.createDirectories(Path.of(path));
-            System.out.println(path);
-        } catch (IOException e) {
-            throw new RuntimeException(e); //TODO EXCEPTION
-        }
+        localStorageService.createCompanyDirectory(createdCompany.getId());
 
         return createdCompany;
     }
