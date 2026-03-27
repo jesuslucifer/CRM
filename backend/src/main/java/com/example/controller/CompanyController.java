@@ -1,30 +1,32 @@
 package com.example.controller;
 
-import com.example.model.Company;
-import com.example.model.EmployeeRole;
-import com.example.model.User;
-import com.example.model.dto.request.CompanyEmployeeRequest;
-import com.example.model.dto.request.CreateCompanyRequest;
-import com.example.model.dto.response.CompanyDto;
-import com.example.model.dto.response.SuccessResponse;
+import com.example.model.*;
+import com.example.model.dto.request.*;
+import com.example.model.dto.response.*;
+import com.example.model.enums.EmployeeRole;
 import com.example.security.SecurityUtil;
-import com.example.service.CompanyService;
-import com.example.service.UserService;
+import com.example.service.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/company")
 @RequiredArgsConstructor
 public class CompanyController {
     private final CompanyService companyService;
     private final UserService userService;
+    private final PropertyService propertyService;
+    private final ClientService clientService;
+    private final OrderService orderService;
+    private final DealService dealService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> create(@RequestBody CreateCompanyRequest request) {
+    public ResponseEntity<?> create(@RequestBody CompanyCreateRequest request) {
         User user = SecurityUtil.getCurrentUser();
 
         Company company = Company.builder()
@@ -37,18 +39,50 @@ public class CompanyController {
 
         companyService.create(company);
 
-        return ResponseEntity.ok(new CompanyDto(company));
+        return ResponseEntity.ok(new CompanyDetailDto(company));
+    }
+
+    @PostMapping("/{id}/deal/create")
+    public ResponseEntity<?> createDeal(
+            @PathVariable Long id,
+            @RequestBody DealCreateRequest request) {
+        Company company = companyService.getById(id);
+        Client client = clientService.getById(request.getClientId());
+        Property property = propertyService.getById(request.getPropertyId());
+        User agent = userService.getById(request.getAgentId());
+
+        Deal deal = Deal.builder()
+                .company(company)
+                .client(client)
+                .property(property)
+                .agent(agent)
+                .status(request.getStatus())
+                .price(request.getPrice())
+                .build();
+
+        dealService.create(deal);
+
+        company.addDeal(deal);
+        client.addDeal(deal);
+        agent.addDeal(deal);
+
+        return ResponseEntity.ok(new SuccessResponse(
+                "Сделка создана",
+                HttpStatus.OK
+        ));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
         Company company = companyService.getById(id);
 
-        return ResponseEntity.ok(new CompanyDto(company));
+        return ResponseEntity.ok(new CompanyDetailDto(company));
     }
 
     @PutMapping("/{id}/avatar")
-    public SuccessResponse updateAvatarUrl(@RequestParam("file") MultipartFile file, @PathVariable Long id) {
+    public SuccessResponse updateAvatarUrl(
+            @RequestParam("file") MultipartFile file,
+            @PathVariable Long id) {
         companyService.updateAvatarUrl(id,file);
 
         return new SuccessResponse(
@@ -57,21 +91,31 @@ public class CompanyController {
         );
     }
 
+//    @PutMapping("/{companyId}/employees")
+//    public ResponseEntity<?> addEmployee(@PathVariable Long companyId,
+//                                         @RequestBody CompanyEmployeeRequest companyEmployeeRequest) {
+//        companyService.addEmployee(companyEmployeeRequest.getEmployeeId(),
+//                companyId,
+//                companyEmployeeRequest.getEmployeeRole());
+//
+//        return ResponseEntity.ok(new CompanyDto(companyService.getById(companyId)));
+//    }
+
     @PutMapping("/{companyId}/employees")
     public ResponseEntity<?> addEmployee(@PathVariable Long companyId,
                                          @RequestBody CompanyEmployeeRequest companyEmployeeRequest) {
-        companyService.addEmployee(companyEmployeeRequest.getEmployeeId(),
+        companyService.addEmployee(companyEmployeeRequest.getEmail(),
                 companyId,
                 companyEmployeeRequest.getEmployeeRole());
 
-        return ResponseEntity.ok(new CompanyDto(companyService.getById(companyId)));
+        return ResponseEntity.ok(new CompanyDetailDto(companyService.getById(companyId)));
     }
 
     @DeleteMapping("/{companyId}/{employeeId}/employees")
     public ResponseEntity<?> removeEmployee(@PathVariable Long companyId,
                                             @PathVariable Long employeeId) {
-        companyService.removeEmployee( employeeId, companyId);
+        companyService.removeEmployee(employeeId, companyId);
 
-        return ResponseEntity.ok(new CompanyDto(companyService.getById(companyId)));
+        return ResponseEntity.ok(new CompanyDetailDto(companyService.getById(companyId)));
     }
 }

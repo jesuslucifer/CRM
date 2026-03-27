@@ -15,7 +15,7 @@ import java.nio.file.StandardCopyOption;
 @Service
 public class LocalStorageServiceImpl implements LocalStorageService {
     @Value("${backend.upload.dir}")
-    private String uploadDir;
+    private String uploadDirectory;
 
     @Value("${server.address:localhost}")
     private String serverAddress;
@@ -26,7 +26,7 @@ public class LocalStorageServiceImpl implements LocalStorageService {
     @Override
     public String uploadFile(MultipartFile file, String fileName) {
         try {
-            Path path = Paths.get(uploadDir);
+            Path path = Paths.get(uploadDirectory);
 
             if (!Files.exists(path)) {
                 Files.createDirectories(path);
@@ -38,6 +38,37 @@ public class LocalStorageServiceImpl implements LocalStorageService {
             return "http://" + serverAddress + ":" + serverPort + "/uploads/avatars/" + fileName;
         } catch (IOException e) {
             throw new UploadFileException();
+        }
+    }
+
+    @Override
+    public String createCompanyDirectory(Long id) {
+        try {
+            String path = uploadDirectory +
+                    "/companies/" + "company_"
+                    + id + "/";
+            Files.createDirectories(Path.of(path));
+            Files.createDirectories(Path.of(path + "docs/"));
+
+            return path;
+        } catch (IOException e) {
+            throw new RuntimeException(e); //TODO EXCEPTION
+        }
+    }
+
+    @Override
+    public String createPropertyDirectory(Long propertyId, Long companyId) {
+        try {
+            String path = uploadDirectory +
+                    "/companies/" + "company_" + companyId
+                    + "/property_" + propertyId + "/";
+            Files.createDirectories(Path.of(path));
+            Files.createDirectories(Path.of(path + "docs/"));
+            Files.createDirectories(Path.of(path + "images/"));
+
+            return path;
+        } catch (IOException e) {
+            throw new RuntimeException(e); //TODO EXCEPTION
         }
     }
 }
