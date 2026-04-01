@@ -32,6 +32,14 @@ public class CompanyPropertyController {
         return ResponseEntity.ok(companyService.getProperties(id));
     }
 
+    @PutMapping("/property/{propertyId}")
+    public ResponseEntity<?> updateProperty(@PathVariable Long propertyId,
+                                            @RequestBody PropertyCreateRequest request) {
+
+        return ResponseEntity.ok(new PropertyResponse(
+                propertyService.update(propertyId, request)));
+    }
+
     @PostMapping("/property/create")
     public ResponseEntity<?> createProperty(
             @PathVariable Long id,

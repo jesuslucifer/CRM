@@ -19,13 +19,7 @@ public class PropertyController {
         return okDto(id);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateProperty(@PathVariable Long id,
-                                            @RequestBody PropertyCreateRequest request) {
-        propertyService.update(id, request);
 
-        return okDto(id);
-    }
 
 //    public ResponseEntity<?> addPhoto(@PathVariable Long id,
 //                                      @RequestParam("file") MultipartFile file) {

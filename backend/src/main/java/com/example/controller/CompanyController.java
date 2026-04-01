@@ -20,10 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class CompanyController {
     private final CompanyService companyService;
     private final UserService userService;
-    private final PropertyService propertyService;
-    private final ClientService clientService;
-    private final OrderService orderService;
-    private final DealService dealService;
 
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody CompanyCreateRequest request) {
@@ -40,36 +36,6 @@ public class CompanyController {
         companyService.create(company);
 
         return ResponseEntity.ok(new CompanyDetailDto(company));
-    }
-
-    @PostMapping("/{id}/deal/create")
-    public ResponseEntity<?> createDeal(
-            @PathVariable Long id,
-            @RequestBody DealCreateRequest request) {
-        Company company = companyService.getById(id);
-        Client client = clientService.getById(request.getClientId());
-        Property property = propertyService.getById(request.getPropertyId());
-        User agent = userService.getById(request.getAgentId());
-
-        Deal deal = Deal.builder()
-                .company(company)
-                .client(client)
-                .property(property)
-                .agent(agent)
-                .status(request.getStatus())
-                .price(request.getPrice())
-                .build();
-
-        dealService.create(deal);
-
-        company.addDeal(deal);
-        client.addDeal(deal);
-        agent.addDeal(deal);
-
-        return ResponseEntity.ok(new SuccessResponse(
-                "Сделка создана",
-                HttpStatus.OK
-        ));
     }
 
     @GetMapping("/{id}")
