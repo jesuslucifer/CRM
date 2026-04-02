@@ -2,8 +2,6 @@ package com.example.controller;
 
 import com.example.model.*;
 import com.example.model.dto.request.DealCreateRequest;
-import com.example.model.dto.request.DealUpdateRequest;
-import com.example.model.dto.response.DealDto;
 import com.example.model.dto.response.SuccessResponse;
 import com.example.service.*;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/company/{id}")
+@RequestMapping("/api/company/{companyId}/deals")
 public class CompanyDealController {
     private final CompanyService companyService;
     private final ClientService clientService;
@@ -21,11 +19,11 @@ public class CompanyDealController {
     private final UserService userService;
     private final DealService dealService;
 
-    @PostMapping("/deal/create")
-    public ResponseEntity<?> createDeal(
-            @PathVariable Long id,
+    @PostMapping
+    public ResponseEntity<?> create(
+            @PathVariable Long companyId,
             @RequestBody DealCreateRequest request) {
-        Company company = companyService.getById(id);
+        Company company = companyService.getById(companyId);
         Client client = clientService.getById(request.getClientId());
         Property property = propertyService.getById(request.getPropertyId());
         User agent = userService.getById(request.getAgentId());
@@ -49,17 +47,6 @@ public class CompanyDealController {
                 "Сделка создана",
                 HttpStatus.OK
         ));
-    }
-
-    @PutMapping("/deal/{dealId}")
-    public ResponseEntity<?> update(
-            @PathVariable Long id,
-            @PathVariable Long dealId,
-            @RequestBody DealUpdateRequest request) {
-
-        Deal deal = dealService.update(id, dealId, request);
-
-        return ResponseEntity.ok(new DealDto(deal));
     }
 
 }

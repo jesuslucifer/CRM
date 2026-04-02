@@ -5,7 +5,6 @@ import com.example.exception.PropertyAlreadyExistsException;
 import com.example.model.Deal;
 import com.example.model.dto.request.DealUpdateRequest;
 import com.example.repository.DealRepository;
-import com.example.service.CompanyService;
 import com.example.service.DealService;
 import com.example.service.UserService;
 import jakarta.transaction.Transactional;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class DealServiceImpl implements DealService {
     private final DealRepository dealRepository;
-    private final CompanyService companyService;
     private final UserService userService;
 
     private Deal save(Deal deal) {
@@ -43,9 +41,7 @@ public class DealServiceImpl implements DealService {
     }
 
     @Override
-    public Deal update(Long companyId, Long dealId, DealUpdateRequest request) {
-        companyService.getById(companyId);
-
+    public Deal update(Long dealId, DealUpdateRequest request) {
         Deal deal = getById(dealId);
 
         deal.setAgent(userService.getById(request.getAgentId()));

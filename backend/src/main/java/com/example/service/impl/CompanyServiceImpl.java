@@ -1,31 +1,19 @@
 package com.example.service.impl;
 
 import com.example.exception.*;
-import com.example.model.Company;
-import com.example.model.Order;
-import com.example.model.Property;
+import com.example.model.*;
 import com.example.model.dto.response.ClientDto;
 import com.example.model.dto.response.OrderDto;
 import com.example.model.enums.EmployeeRole;
-import com.example.model.User;
 import com.example.model.dto.response.PropertyResponse;
 import com.example.repository.CompanyEmployeeRepository;
 import com.example.repository.CompanyRepository;
-import com.example.repository.PropertyRepository;
 import com.example.repository.UserRepository;
-import com.example.service.CompanyService;
-import com.example.service.LocalStorageService;
-import com.example.service.OrderService;
-import com.example.service.PropertyService;
+import com.example.service.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,8 +26,8 @@ public class CompanyServiceImpl implements CompanyService {
     private final CompanyEmployeeRepository companyEmployeeRepository;
     private final PropertyService propertyService;
     private final OrderService orderService;
-    @Value("${backend.upload.dir}")
-    private String uploadDirectory;
+    private final DealService dealService;
+    private final ClientService clientService;
 
     @Override
     public Company save(Company company) {
@@ -100,7 +88,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         company.addEmployee(user, role);
 
-        return companyRepository.save(company);
+        return save(company);
     }
 
     @Override
@@ -117,7 +105,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         company.addEmployee(user, role);
 
-        return companyRepository.save(company);
+        return save(company);
     }
 
     @Override
@@ -134,7 +122,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         company.removeEmployee(user);
 
-        return companyRepository.save(company);
+        return save(company);
     }
 
     @Override
@@ -171,24 +159,46 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public Company removeProperty(Long companyId, Long propertyId) {
-        Company company = getById(companyId);
-
+    public Company removeProperty(Long propertyId) {
         Property property = propertyService.getById(propertyId);
+
+        Company company = getById(property.getCompany().getId());
 
         company.removeProperty(property);
 
-        return companyRepository.save(company);
+        return save(company);
     }
 
     @Override
-    public Company removeOrder(Long companyId, Long orderId) {
-        Company company = getById(companyId);
-
+    public Company removeOrder(Long orderId) {
         Order order = orderService.getById(orderId);
+
+        Company company = getById(order.getCompany().getId());
 
         company.removeOrder(order);
 
-        return companyRepository.save(company);
+        return save(company);
+    }
+
+    @Override
+    public Company removeDeal(Long dealId) {
+        Deal deal = dealService.getById(dealId);
+
+        Company company = getById(deal.getCompany().getId());
+
+        company.removeDeal(deal);
+
+        return save(company);
+    }
+
+    @Override
+    public Company removeClient(Long clientId) {
+        Client client = clientService.getById(clientId);
+
+        Company company = getById(client.getCompany().getId());
+
+        company.removeClient(client);
+
+        return save(company);
     }
 }

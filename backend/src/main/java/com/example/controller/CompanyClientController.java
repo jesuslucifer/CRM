@@ -13,22 +13,22 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/company/{id}")
+@RequestMapping("/api/company/{companyId}/clients")
 @RequiredArgsConstructor
 public class CompanyClientController {
     private final CompanyService companyService;
     private final ClientService clientService;
 
-    @GetMapping("/clients")
-    public ResponseEntity<?> getClients(@PathVariable Long id) {
-        return ResponseEntity.ok(companyService.getClients(id));
+    @GetMapping
+    public ResponseEntity<?> getAll(@PathVariable Long companyId) {
+        return ResponseEntity.ok(companyService.getClients(companyId));
     }
 
-    @PostMapping("/client/create")
-    public ResponseEntity<?> createClient(
-            @PathVariable Long id,
+    @PostMapping
+    public ResponseEntity<?> create(
+            @PathVariable Long companyId,
             @RequestBody ClientCreateRequest request) {
-        Company company = companyService.getById(id);
+        Company company = companyService.getById(companyId);
 
         Client client = Client.builder()
                 .company(company)

@@ -17,23 +17,23 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/company/{id}")
+@RequestMapping("/api/company/{companyId}/orders")
 @RequiredArgsConstructor
 public class CompanyOrderController {
     private final CompanyService companyService;
     private final OrderService orderService;
     private final ClientService clientService;
 
-    @GetMapping("/orders")
-    public ResponseEntity<?> getOrders(@PathVariable Long id) {
-        return ResponseEntity.ok(companyService.getOrders(id));
+    @GetMapping
+    public ResponseEntity<?> getAll(@PathVariable Long companyId) {
+        return ResponseEntity.ok(companyService.getOrders(companyId));
     }
 
-    @PostMapping("/order/create")
-    public ResponseEntity<?> createOrder(
-            @PathVariable Long id,
+    @PostMapping
+    public ResponseEntity<?> create(
+            @PathVariable Long companyId,
             @RequestBody OrderCreateRequest request) {
-        Company company = companyService.getById(id);
+        Company company = companyService.getById(companyId);
         Client client = clientService.getById(request.getClientId());
 
         Order order = Order.builder()
@@ -50,17 +50,5 @@ public class CompanyOrderController {
         client.addOrder(order);
 
         return ResponseEntity.ok(new OrderDto(order));
-    }
-
-    @DeleteMapping("/{orderId}/order")
-    public ResponseEntity<?> removeOrder(
-            @PathVariable Long id,
-            @PathVariable Long orderId) {
-        companyService.removeOrder(id, orderId);
-
-        return ResponseEntity.ok(new SuccessResponse(
-                "Заявка удалена",
-                HttpStatus.OK
-        ));
     }
 }

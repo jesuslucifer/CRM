@@ -45,6 +45,13 @@ public class CompanyController {
         return ResponseEntity.ok(new CompanyDetailDto(company));
     }
 
+//    @PutMapping("/{id}")
+//    public ResponseEntity<?> update(
+//            @PathVariable Long id,
+//            @RequestBody CompanyCreateRequest request) {
+//        return ResponseEntity.ok(new Compa)
+//    }
+
     @PutMapping("/{id}/avatar")
     public SuccessResponse updateAvatarUrl(
             @RequestParam("file") MultipartFile file,
@@ -84,4 +91,5 @@ public class CompanyController {
 
         return ResponseEntity.ok(new CompanyDetailDto(companyService.getById(companyId)));
     }
+
 }

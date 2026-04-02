@@ -21,30 +21,22 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/company/{id}")
+@RequestMapping("/api/company/{companyId}/properties")
 @RequiredArgsConstructor
 public class CompanyPropertyController {
     private final CompanyService companyService;
     private final PropertyService propertyService;
 
-    @GetMapping("/properties")
-    public ResponseEntity<?> getProperties(@PathVariable Long id) {
-        return ResponseEntity.ok(companyService.getProperties(id));
+    @GetMapping
+    public ResponseEntity<?> getAll(@PathVariable Long companyId) {
+        return ResponseEntity.ok(companyService.getProperties(companyId));
     }
 
-    @PutMapping("/property/{propertyId}")
-    public ResponseEntity<?> updateProperty(@PathVariable Long propertyId,
-                                            @RequestBody PropertyCreateRequest request) {
-
-        return ResponseEntity.ok(new PropertyResponse(
-                propertyService.update(propertyId, request)));
-    }
-
-    @PostMapping("/property/create")
-    public ResponseEntity<?> createProperty(
-            @PathVariable Long id,
+    @PostMapping
+    public ResponseEntity<?> create(
+            @PathVariable Long companyId,
             @RequestBody PropertyCreateRequest request) {
-        Company company = companyService.getById(id);
+        Company company = companyService.getById(companyId);
 
         Property property = Property.builder()
                 .cadastralNumber(request.getCadastralNumber())
@@ -73,19 +65,10 @@ public class CompanyPropertyController {
         return ResponseEntity.ok(new PropertyResponse(property, company));
     }
 
-    @DeleteMapping("/{propertyId}/property")
-    public ResponseEntity<?> removeProperty(
-            @PathVariable Long id,
-            @PathVariable Long propertyId) {
-        companyService.removeProperty(id, propertyId);
-
-        return ResponseEntity.ok(companyService.getProperties(id));
-    }
-
     @PostMapping("/import-from-csv")
     public ResponseEntity<?> importFromCsvNio(
             @RequestParam("file") MultipartFile file,
-            @PathVariable("id") Long companyId) {
+            @PathVariable Long companyId) {
 
         log.info("Получен запрос на импорт CSV файла (NIO): {}, companyId: {}",
                 file.getOriginalFilename(), companyId);
