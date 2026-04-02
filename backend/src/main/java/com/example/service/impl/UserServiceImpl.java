@@ -2,27 +2,33 @@ package com.example.service.impl;
 
 import com.example.exception.*;
 import com.example.model.User;
+import com.example.model.dto.request.UserUpdateRequest;
 import com.example.model.dto.response.UserDto;
 import com.example.repository.UserRepository;
 import com.example.service.LocalStorageService;
 import com.example.service.UserService;
 import com.example.specification.UserSpecification;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserDetailsService, UserService {
     private final UserRepository userRepository;
     private final LocalStorageService localStorageService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public User save(User user) {
@@ -66,6 +72,12 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
+    public User getByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(EmailNotFoundException::new);
+    }
+
+    @Override
     public List<UserDto> getAll(String username, Pageable pageable) {
         Specification<User> spec = Specification.where(UserSpecification.byUsernameLike(username));
 
@@ -92,7 +104,6 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
         user.setAvatarUrl(fileUrl);
         userRepository.save(user);
-
     }
 
     @Override
@@ -101,7 +112,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public User updateNameAndLastName(Long id, UserDto userDto) {
+    public User update(Long id, UserUpdateRequest userDto) {
         User user = getById(id);
 
         if (userDto.getName() != null) {
@@ -111,6 +122,58 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         if (userDto.getLastName() != null) {
             user.setLastName(userDto.getLastName());
         }
+
+        if (userDto.getUsername() != null) {
+            if (userRepository.existsByUsername(userDto.getUsername())) {
+                throw new UsernameAlreadyExistsException();
+            }
+            user.setUsername(userDto.getUsername());
+        }
+
+        return userRepository.save(user);
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public User changePassword(User user, String newPassword) {
+        user.setPassword(passwordEncoder.encode(newPassword));
+        return userRepository.save(user);
+    }
+
+    @Override
+    public User changeEmail(Long id, String newEmail, String password) {
+        User user = getById(id);
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new WrongPasswordException();
+        }
+
+        if (userRepository.existsByEmail(newEmail)) {
+            throw new EmailAlreadyExistsException();
+        }
+
+        user.setEmail(newEmail);
+
+        return userRepository.save(user);
+    }
+
+    @Override
+    public User changePasswordWithConfirmPassword(User user, String newPassword, String confirmPassword) {
+        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+            log.info("perv");
+            throw new WrongPasswordException();
+        }
+
+        if (!passwordEncoder.matches(confirmPassword, user.getPassword())) {
+            log.info("vtor");
+            throw new WrongPasswordException();
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
 
         return userRepository.save(user);
     }
