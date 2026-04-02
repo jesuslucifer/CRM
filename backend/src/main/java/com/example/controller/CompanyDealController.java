@@ -19,6 +19,12 @@ public class CompanyDealController {
     private final UserService userService;
     private final DealService dealService;
 
+    @GetMapping
+    public ResponseEntity<?> getAll(@PathVariable Long companyId) {
+        return ResponseEntity.ok(
+                companyService.getDeals(companyId));
+    }
+
     @PostMapping
     public ResponseEntity<?> create(
             @PathVariable Long companyId,

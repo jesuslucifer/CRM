@@ -17,6 +17,7 @@ public interface UserService {
     User getByUsernameOrEmail(String usernameOrEmail);
     User getByUsername(String username);
     User getById(Long id);
+    User getByEmail(String email);
     List<UserDto> getAll(String username, Pageable pageable);
     void updateAvatarUrl(Long id, MultipartFile file);
     UserDetails loadUserByUsername(String usernameOrEmail);

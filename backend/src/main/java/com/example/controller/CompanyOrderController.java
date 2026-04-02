@@ -5,13 +5,11 @@ import com.example.model.Company;
 import com.example.model.Order;
 import com.example.model.dto.request.OrderCreateRequest;
 import com.example.model.dto.response.OrderDto;
-import com.example.model.dto.response.SuccessResponse;
 import com.example.service.ClientService;
 import com.example.service.CompanyService;
 import com.example.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +24,8 @@ public class CompanyOrderController {
 
     @GetMapping
     public ResponseEntity<?> getAll(@PathVariable Long companyId) {
-        return ResponseEntity.ok(companyService.getOrders(companyId));
+        return ResponseEntity.ok(
+                companyService.getOrders(companyId));
     }
 
     @PostMapping

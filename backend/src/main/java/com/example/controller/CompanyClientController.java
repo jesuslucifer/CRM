@@ -21,7 +21,8 @@ public class CompanyClientController {
 
     @GetMapping
     public ResponseEntity<?> getAll(@PathVariable Long companyId) {
-        return ResponseEntity.ok(companyService.getClients(companyId));
+        return ResponseEntity.ok(
+                companyService.getClients(companyId));
     }
 
     @PostMapping

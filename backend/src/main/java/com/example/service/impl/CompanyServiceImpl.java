@@ -3,12 +3,12 @@ package com.example.service.impl;
 import com.example.exception.*;
 import com.example.model.*;
 import com.example.model.dto.response.ClientDto;
+import com.example.model.dto.response.DealDto;
 import com.example.model.dto.response.OrderDto;
 import com.example.model.enums.EmployeeRole;
 import com.example.model.dto.response.PropertyResponse;
 import com.example.repository.CompanyEmployeeRepository;
 import com.example.repository.CompanyRepository;
-import com.example.repository.UserRepository;
 import com.example.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,12 +22,12 @@ import java.util.stream.Collectors;
 public class CompanyServiceImpl implements CompanyService {
     private final CompanyRepository companyRepository;
     private final LocalStorageService localStorageService;
-    private final UserRepository userRepository;
     private final CompanyEmployeeRepository companyEmployeeRepository;
     private final PropertyService propertyService;
     private final OrderService orderService;
     private final DealService dealService;
     private final ClientService clientService;
+    private final UserService userService;
 
     @Override
     public Company save(Company company) {
@@ -56,8 +56,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public void updateAvatarUrl(Long id, MultipartFile file) {
-        Company company = companyRepository.findById(id)
-                .orElseThrow(CompanyNotFoundException::new);
+        Company company = getById(id);
 
         if (file.isEmpty()) {
             throw new UploadFileIsEmptyException();
@@ -76,11 +75,9 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public Company addEmployee(Long userId, Long companyId, EmployeeRole role) {
-        Company company = companyRepository.findById(companyId)
-                .orElseThrow(CompanyNotFoundException::new);
+        Company company = getById(companyId);
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
+        User user = userService.getById(userId);
 
         if (companyEmployeeRepository.existsByCompanyIdAndUserId(companyId, userId)) {
             throw new EmployeeAlreadyExistsException();
@@ -93,11 +90,9 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public Company addEmployee(String email, Long companyId, EmployeeRole role) {
-        Company company = companyRepository.findById(companyId)
-                .orElseThrow(CompanyNotFoundException::new);
+        Company company = getById(companyId);
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(UserNotFoundException::new);
+        User user = userService.getByEmail(email);
 
         if (companyEmployeeRepository.existsByCompanyIdAndUserEmail(companyId, email)) {
             throw new EmployeeAlreadyExistsException();
@@ -110,11 +105,9 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public Company removeEmployee(Long userId, Long companyId) {
-        Company company = companyRepository.findById(companyId)
-                .orElseThrow(CompanyNotFoundException::new);
+        Company company = getById(companyId);
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
+        User user = userService.getById(userId);
 
         if (!companyEmployeeRepository.existsByCompanyIdAndUserId(companyId, userId)) {
             throw new EmployeeNotFoundException();
@@ -127,8 +120,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public List<PropertyResponse> getProperties(Long companyId) {
-        Company company = companyRepository.findById(companyId)
-                .orElseThrow(CompanyNotFoundException::new);
+        Company company = getById(companyId);
 
         return company.getProperties()
                 .stream()
@@ -138,8 +130,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public List<OrderDto> getOrders(Long companyId) {
-        Company company = companyRepository.findById(companyId)
-                .orElseThrow(CompanyNotFoundException::new);
+        Company company = getById(companyId);
 
         return company.getOrders()
                 .stream()
@@ -149,12 +140,21 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public List<ClientDto> getClients(Long companyId) {
-        Company company = companyRepository.findById(companyId)
-                .orElseThrow(CompanyNotFoundException::new);
+        Company company = getById(companyId);
 
         return company.getClients()
                 .stream()
                 .map(ClientDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DealDto> getDeals(Long companyId) {
+        Company company = getById(companyId);
+
+        return company.getDeals()
+                .stream()
+                .map(DealDto::new)
                 .collect(Collectors.toList());
     }
 

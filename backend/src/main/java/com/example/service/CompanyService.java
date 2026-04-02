@@ -2,6 +2,7 @@ package com.example.service;
 
 import com.example.model.Company;
 import com.example.model.dto.response.ClientDto;
+import com.example.model.dto.response.DealDto;
 import com.example.model.dto.response.OrderDto;
 import com.example.model.enums.EmployeeRole;
 import com.example.model.dto.response.PropertyResponse;
@@ -20,6 +21,7 @@ public interface CompanyService {
     List<PropertyResponse> getProperties(Long companyId);
     List<OrderDto> getOrders(Long companyId);
     List<ClientDto> getClients(Long companyId);
+    List<DealDto> getDeals(Long companyId);
     Company removeProperty(Long propertyId);
     Company removeOrder(Long orderId);
     Company removeDeal(Long dealId);

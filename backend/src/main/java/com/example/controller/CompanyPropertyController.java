@@ -29,7 +29,8 @@ public class CompanyPropertyController {
 
     @GetMapping
     public ResponseEntity<?> getAll(@PathVariable Long companyId) {
-        return ResponseEntity.ok(companyService.getProperties(companyId));
+        return ResponseEntity.ok(
+                companyService.getProperties(companyId));
     }
 
     @PostMapping

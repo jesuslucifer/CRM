@@ -72,6 +72,12 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
+    public User getByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(EmailNotFoundException::new);
+    }
+
+    @Override
     public List<UserDto> getAll(String username, Pageable pageable) {
         Specification<User> spec = Specification.where(UserSpecification.byUsernameLike(username));
 
