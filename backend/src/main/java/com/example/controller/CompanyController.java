@@ -87,9 +87,8 @@ public class CompanyController {
     @DeleteMapping("/{companyId}/{employeeId}/employees")
     public ResponseEntity<?> removeEmployee(@PathVariable Long companyId,
                                             @PathVariable Long employeeId) {
-        companyService.removeEmployee(employeeId, companyId);
-
-        return ResponseEntity.ok(new CompanyDetailDto(companyService.getById(companyId)));
+        return ResponseEntity.ok(
+                new CompanyDetailDto(companyService.removeEmployee(employeeId, companyId)));
     }
 
 }

@@ -8,4 +8,6 @@ public interface OrderService {
     Order create(Order order);
     Order update(Long orderId, OrderCreateRequest request);
     Order getById(Long id);
+    Order addProperty(Long orderId, Long propertyId);
+    Order removeProperty(Long orderId, Long propertyId);
 }

@@ -39,4 +39,18 @@ public class OrderController {
                 HttpStatus.OK
         ));
     }
+
+    @PutMapping("/{propertyId}/property")
+    public ResponseEntity<?> addProperty(@PathVariable Long orderId,
+                                         @PathVariable Long propertyId) {
+        return ResponseEntity.ok(
+                new OrderDto(orderService.addProperty(orderId, propertyId)));
+    }
+
+    @DeleteMapping("/{propertyId}/property")
+    public ResponseEntity<?> removeProperty(@PathVariable Long orderId,
+                                         @PathVariable Long propertyId) {
+        return ResponseEntity.ok(
+                new OrderDto(orderService.removeProperty(orderId, propertyId)));
+    }
 }

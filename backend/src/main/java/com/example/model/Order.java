@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Data
 @Builder
@@ -28,6 +30,10 @@ public class Order {
     @JoinColumn(name = "client_id")
     private Client client;
 
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Property> properties;
+
     @Column(name = "city")
     private String city;
 
@@ -41,4 +47,12 @@ public class Order {
 
     @Column(name = "description")
     private String description;
+
+    public void addProperty(Property property) {
+        properties.add(property);
+    }
+
+    public void removeProperty(Property property) {
+        properties.remove(property);
+    }
 }

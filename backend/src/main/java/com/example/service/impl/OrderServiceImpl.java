@@ -2,9 +2,11 @@ package com.example.service.impl;
 
 import com.example.exception.PropertyNotFoundException;
 import com.example.model.Order;
+import com.example.model.Property;
 import com.example.model.dto.request.OrderCreateRequest;
 import com.example.repository.OrderRepository;
 import com.example.service.OrderService;
+import com.example.service.PropertyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
+    private final PropertyService propertyService;
 
     @Override
     public Order save(Order order) {
@@ -39,5 +42,27 @@ public class OrderServiceImpl implements OrderService {
     public Order getById(Long id) {
         return orderRepository.findById(id)
                 .orElseThrow(PropertyNotFoundException::new); //TODO EXCEPTION
+    }
+
+    @Override
+    public Order addProperty(Long orderId, Long propertyId) {
+        Order order = getById(orderId);
+
+        Property property = propertyService.getById(propertyId);
+
+        order.addProperty(property);
+
+        return save(order);
+    }
+
+    @Override
+    public Order removeProperty(Long orderId, Long propertyId) {
+        Order order = getById(orderId);
+
+        Property property = propertyService.getById(propertyId);
+
+        order.removeProperty(property);
+
+        return save(order);
     }
 }
