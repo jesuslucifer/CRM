@@ -26,4 +26,5 @@ public interface CompanyService {
     Company removeOrder(Long orderId);
     Company removeDeal(Long dealId);
     Company removeClient(Long clientId);
+    Company getReferenceById(Long companyId);
 }

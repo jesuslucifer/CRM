@@ -1,6 +1,7 @@
 package com.example.model.dto.request;
 
 import com.example.model.enums.DealType;
+import com.example.model.enums.OrderStatus;
 import com.example.model.enums.PropertyType;
 import lombok.Data;
 
@@ -11,4 +12,5 @@ public class OrderCreateRequest {
     private PropertyType propertyType;
     private DealType dealType;
     private String description;
+    private OrderStatus status;
 }

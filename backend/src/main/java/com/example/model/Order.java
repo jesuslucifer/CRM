@@ -1,6 +1,8 @@
 package com.example.model;
 
 import com.example.model.enums.DealType;
+import com.example.model.enums.OrderPropertyStatus;
+import com.example.model.enums.OrderStatus;
 import com.example.model.enums.PropertyType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,7 +10,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Data
@@ -30,9 +34,9 @@ public class Order {
     @JoinColumn(name = "client_id")
     private Client client;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @Builder.Default
-    private List<Property> properties;
+    private List<OrderProperty> properties = new ArrayList<>();
 
     @Column(name = "city")
     private String city;
@@ -48,11 +52,26 @@ public class Order {
     @Column(name = "description")
     private String description;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private OrderStatus status;
+
     public void addProperty(Property property) {
-        properties.add(property);
+        OrderProperty orderProperty = OrderProperty.builder()
+                .order(this)
+                .property(property)
+                .status(OrderPropertyStatus.SELECTION)
+                .build();
+        properties.add(orderProperty);
     }
 
     public void removeProperty(Property property) {
-        properties.remove(property);
+        properties.removeIf(op -> op.getProperty().equals(property));
+    }
+
+    public List<Property> getProperties() {
+        return properties.stream()
+                .map(OrderProperty::getProperty)
+                .collect(Collectors.toList());
     }
 }

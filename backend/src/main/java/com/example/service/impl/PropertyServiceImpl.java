@@ -6,7 +6,6 @@ import com.example.model.dto.request.PropertyCreateRequest;
 import com.example.model.enums.DealType;
 import com.example.model.enums.PropertyStatus;
 import com.example.model.enums.PropertyType;
-import com.example.repository.CompanyRepository;
 import com.example.repository.PropertyRepository;
 import com.example.service.LocalStorageService;
 import com.example.service.PropertyService;
@@ -31,7 +30,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PropertyServiceImpl implements PropertyService {
     private final PropertyRepository propertyRepository;
-    private final CompanyRepository companyRepository;
     private final LocalStorageService localStorageService;
 
     @Override
@@ -55,8 +53,7 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Override
     public Property update(Long id, PropertyCreateRequest request) {
-        Property property = propertyRepository.findById(id)
-                .orElseThrow(PropertyNotFoundException::new);
+        Property property = getById(id);
 
         property.setTitle(request.getTitle());
         property.setDescription(request.getDescription());
@@ -74,7 +71,7 @@ public class PropertyServiceImpl implements PropertyService {
         property.setYearBuilt(request.getYearBuilt());
         property.setStatus(property.getStatus());
 
-        return propertyRepository.save(property);
+        return save(property);
     }
 
     @Override
@@ -84,7 +81,7 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     @Override
-    public List<Property> importFromCsv(String fileName, Long companyId) {
+    public List<Property> importFromCsv(String fileName, Company company) {
         List<Property> importedProperties = new ArrayList<>();
         int createdCount = 0;
         int updatedCount = 0;
@@ -119,7 +116,7 @@ public class PropertyServiceImpl implements PropertyService {
             }
 
             List<Property> existingProperties = propertyRepository
-                    .findAllByCadastralNumberInAndCompanyId(cadastralNumbers, companyId);
+                    .findAllByCadastralNumberInAndCompanyId(cadastralNumbers, company.getId());
 
             Map<Long, Property> propertyMap = existingProperties.stream()
                     .collect(Collectors.toMap(
@@ -137,7 +134,7 @@ public class PropertyServiceImpl implements PropertyService {
                         importedProperties.add(existingProperty);
                         updatedCount++;
                     } else {
-                        Property newProperty = toProperty(split, companyId);
+                        Property newProperty = toProperty(split, company);
                         importedProperties.add(newProperty);
                         createdCount++;
                     }
@@ -181,13 +178,12 @@ public class PropertyServiceImpl implements PropertyService {
         String filename = "property_" + property.getId() + "_" + property.getTitle();
         String fileUrl = localStorageService.uploadFile(file, filename);
 
-        return propertyRepository.save(property);
+        return save(property);
     }
 
-    private Property toProperty(String[] split, Long companyId) {
+    private Property toProperty(String[] split, Company company) {
         try {
-            Company company = companyRepository.findById(companyId)
-                    .orElseThrow(CompanyNotFoundException::new);
+
             return Property.builder()
                     .cadastralNumber(Long.parseLong(split[0].trim()))
                     .title(split.length > 1 ? split[1].trim() : null)

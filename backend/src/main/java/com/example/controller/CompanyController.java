@@ -64,16 +64,6 @@ public class CompanyController {
         );
     }
 
-//    @PutMapping("/{companyId}/employees")
-//    public ResponseEntity<?> addEmployee(@PathVariable Long companyId,
-//                                         @RequestBody CompanyEmployeeRequest companyEmployeeRequest) {
-//        companyService.addEmployee(companyEmployeeRequest.getEmployeeId(),
-//                companyId,
-//                companyEmployeeRequest.getEmployeeRole());
-//
-//        return ResponseEntity.ok(new CompanyDto(companyService.getById(companyId)));
-//    }
-
     @PutMapping("/{companyId}/employees")
     public ResponseEntity<?> addEmployee(@PathVariable Long companyId,
                                          @RequestBody CompanyEmployeeRequest companyEmployeeRequest) {

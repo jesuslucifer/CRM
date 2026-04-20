@@ -77,6 +77,8 @@ public class CompanyPropertyController {
         Path tempFile = null;
 
         try {
+            Company company = companyService.getById(companyId);
+
             tempFile = Files.createTempFile("import_", "_" + file.getOriginalFilename());
 
             file.transferTo(tempFile.toFile());
@@ -85,7 +87,7 @@ public class CompanyPropertyController {
 
             List<Property> importedProperties = propertyService.importFromCsv(
                     tempFile.toAbsolutePath().toString(),
-                    companyId
+                    company
             );
 
             return ResponseEntity.ok("Импорт успешно завершен");

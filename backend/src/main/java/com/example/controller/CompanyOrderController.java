@@ -5,6 +5,7 @@ import com.example.model.Company;
 import com.example.model.Order;
 import com.example.model.dto.request.OrderCreateRequest;
 import com.example.model.dto.response.OrderDto;
+import com.example.model.enums.OrderStatus;
 import com.example.service.ClientService;
 import com.example.service.CompanyService;
 import com.example.service.OrderService;
@@ -42,6 +43,7 @@ public class CompanyOrderController {
                 .dealType(request.getDealType())
                 .propertyType(request.getPropertyType())
                 .description(request.getDescription())
+                .status(OrderStatus.NEW)
                 .build();
 
         orderService.create(order);

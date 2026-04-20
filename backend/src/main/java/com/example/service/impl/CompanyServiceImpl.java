@@ -201,4 +201,9 @@ public class CompanyServiceImpl implements CompanyService {
 
         return save(company);
     }
+
+    @Override
+    public Company getReferenceById(Long companyId) {
+        return companyRepository.getReferenceById(companyId);
+    }
 }

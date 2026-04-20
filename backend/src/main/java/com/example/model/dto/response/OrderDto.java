@@ -3,6 +3,7 @@ package com.example.model.dto.response;
 import com.example.model.Order;
 import com.example.model.Property;
 import com.example.model.enums.DealType;
+import com.example.model.enums.OrderStatus;
 import com.example.model.enums.PropertyType;
 import lombok.Data;
 
@@ -18,6 +19,7 @@ public class OrderDto {
     private PropertyType propertyType;
     private DealType dealType;
     private String description;
+    private OrderStatus status;
 
     public OrderDto(Order order) {
         this.id = order.getId();
@@ -30,5 +32,6 @@ public class OrderDto {
                 .stream()
                 .map(PropertyResponse::new)
                 .collect(Collectors.toList());
+        this.status = order.getStatus();
     }
 }

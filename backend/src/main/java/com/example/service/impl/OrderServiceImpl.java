@@ -34,6 +34,8 @@ public class OrderServiceImpl implements OrderService {
         order.setPropertyType(request.getPropertyType());
         order.setDealType(request.getDealType());
         order.setDescription(request.getDescription());
+        order.setStatus(request.getStatus());
+
 
         return save(order);
     }

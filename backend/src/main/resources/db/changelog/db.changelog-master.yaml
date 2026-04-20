@@ -21,3 +21,7 @@ databaseChangeLog:
       file: db/changelog/17.03.2026/create-table-clients.yaml
   - include:
       file: db/changelog/18.03.2026/create-table-deals.yaml
+  - include:
+      file: db/changelog/08.04.2026/create-table-order-properties.yaml
+  - include:
+      file: db/changelog/20.04.2026/add-column-order-status-in-orders.yaml
