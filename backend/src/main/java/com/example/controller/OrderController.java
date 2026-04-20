@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.example.model.dto.request.OrderCreateRequest;
+import com.example.model.dto.request.OrderPropertyUpdateRequest;
 import com.example.model.dto.response.OrderDto;
 import com.example.model.dto.response.SuccessResponse;
 import com.example.service.CompanyService;
@@ -52,5 +53,14 @@ public class OrderController {
                                          @PathVariable Long propertyId) {
         return ResponseEntity.ok(
                 new OrderDto(orderService.removeProperty(orderId, propertyId)));
+    }
+
+    @PutMapping("/{propertyId}/order-property")
+    public ResponseEntity<?> updateOrderProperty(@PathVariable Long orderId,
+                                                 @PathVariable Long propertyId,
+                                                 @RequestBody OrderPropertyUpdateRequest orderPropertyUpdateRequest) {
+        return ResponseEntity.ok(
+                new OrderDto(orderService.updateOrderProperty(propertyId, orderId, orderPropertyUpdateRequest))
+        );
     }
 }

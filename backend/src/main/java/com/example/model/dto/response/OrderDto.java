@@ -1,7 +1,6 @@
 package com.example.model.dto.response;
 
 import com.example.model.Order;
-import com.example.model.Property;
 import com.example.model.enums.DealType;
 import com.example.model.enums.OrderStatus;
 import com.example.model.enums.PropertyType;
@@ -15,7 +14,7 @@ public class OrderDto {
     private Long id;
     private ClientDto client;
     private String city;
-    private List<PropertyResponse> properties;
+    private List<OrderPropertyResponse> properties;
     private PropertyType propertyType;
     private DealType dealType;
     private String description;
@@ -30,7 +29,7 @@ public class OrderDto {
         this.description = order.getDescription();
         this.properties = order.getProperties()
                 .stream()
-                .map(PropertyResponse::new)
+                .map(OrderPropertyResponse::new)
                 .collect(Collectors.toList());
         this.status = order.getStatus();
     }

@@ -1,7 +1,6 @@
 package com.example.model;
 
 import com.example.model.enums.DealType;
-import com.example.model.enums.OrderPropertyStatus;
 import com.example.model.enums.OrderStatus;
 import com.example.model.enums.PropertyType;
 import jakarta.persistence.*;
@@ -12,7 +11,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Data
@@ -56,22 +54,17 @@ public class Order {
     @Column(name = "status")
     private OrderStatus status;
 
-    public void addProperty(Property property) {
-        OrderProperty orderProperty = OrderProperty.builder()
-                .order(this)
-                .property(property)
-                .status(OrderPropertyStatus.SELECTION)
-                .build();
+    public void addProperty(OrderProperty orderProperty) {
         properties.add(orderProperty);
     }
 
-    public void removeProperty(Property property) {
-        properties.removeIf(op -> op.getProperty().equals(property));
+    public void removeProperty(OrderProperty orderProperty) {
+        properties.remove(orderProperty);
     }
 
-    public List<Property> getProperties() {
-        return properties.stream()
-                .map(OrderProperty::getProperty)
-                .collect(Collectors.toList());
-    }
+//    public List<Property> getProperties() {
+//        return properties.stream()
+//                .map(OrderProperty::getProperty)
+//                .collect(Collectors.toList());
+//    }
 }
