@@ -45,4 +45,9 @@ public class OrderPropertyServiceImpl implements OrderPropertyService {
 
         return save(orderProperty);
     }
+
+    @Override
+    public boolean existsByOrderIdAndPropertyId(Long orderId, Long propertyId) {
+        return orderPropertyRepository.existsByOrderIdAndPropertyId(orderId, propertyId);
+    }
 }

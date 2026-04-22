@@ -9,4 +9,5 @@ public interface OrderPropertyService {
     OrderProperty getById(Long orderPropertyId);
     OrderProperty getByOrderIdAndPropertyId(Long propertyId, Long orderId);
     OrderProperty update(Long propertyId, Long orderId, OrderPropertyUpdateRequest orderPropertyUpdateRequest);
+    boolean existsByOrderIdAndPropertyId(Long orderId, Long propertyId);
 }

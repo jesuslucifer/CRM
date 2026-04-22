@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface OrderPropertyRepository extends JpaRepository<OrderProperty, Long> {
     Optional<OrderProperty> findByOrderIdAndPropertyId(Long orderId, Long propertyId);
+    boolean existsByOrderIdAndPropertyId(Long orderId, Long propertyId);
 }

@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/order/{orderId}")
@@ -46,6 +48,13 @@ public class OrderController {
                                          @PathVariable Long propertyId) {
         return ResponseEntity.ok(
                 new OrderDto(orderService.addProperty(orderId, propertyId)));
+    }
+
+    @PutMapping("/properties")
+    public ResponseEntity<?> addProperties(@PathVariable Long orderId,
+                                         @RequestBody List<Long> propertyIds) {
+        return ResponseEntity.ok(
+                new OrderDto(orderService.addProperties(orderId, propertyIds)));
     }
 
     @DeleteMapping("/{propertyId}/property")
