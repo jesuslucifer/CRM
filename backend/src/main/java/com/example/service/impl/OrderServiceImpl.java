@@ -60,8 +60,26 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order addProperty(Long orderId, Long propertyId) {
         Order order = getById(orderId);
+        addSingleProperty(order, propertyId);
+        return save(order);
+    }
 
+    @Override
+    public Order addProperties(Long orderId, List<Long> propertyIds) {
+        Order order = getById(orderId);
+        for (Long propertyId : propertyIds) {
+            addSingleProperty(order, propertyId);
+        }
+        return save(order);
+    }
+
+    private void addSingleProperty(Order order, Long propertyId) {
         Property property = propertyService.getById(propertyId);
+
+        if (orderPropertyService.existsByOrderIdAndPropertyId(order.getId(), propertyId)) {
+            log.info("Property {} already exist in order {}", propertyId, order.getId());
+            return;
+        }
 
         OrderProperty orderProperty = OrderProperty.builder()
                 .order(order)
@@ -69,43 +87,17 @@ public class OrderServiceImpl implements OrderService {
                 .status(OrderPropertyStatus.SELECTION)
                 .build();
 
-        order.setStatus(OrderStatus.SELECTION);
-
         order.addProperty(orderPropertyService.save(orderProperty));
+        log.info("Add property {} to order {}", propertyId, order.getId());
 
-        return save(order);
+        updateOrderStatusToSelection(order);
     }
 
-    @Override
-    public Order addProperties(Long orderId, List<Long> propertyIds) {
-        Order order = getById(orderId);
-        boolean flag = false;
-
-        for (Long propertyId : propertyIds) {
-            Property property = propertyService.getById(propertyId);
-
-            OrderProperty orderProperty = OrderProperty.builder()
-                    .order(order)
-                    .property(property)
-                    .status(OrderPropertyStatus.SELECTION)
-                    .build();
-
-            if (!orderPropertyService.existsByOrderIdAndPropertyId(orderId, propertyId)) {
-                order.addProperty(orderPropertyService.save(orderProperty));
-                log.info("Add property {} to order {}", propertyId, orderId);
-
-                if (!(order.getStatus() == OrderStatus.SELECTION) && (property != null && !flag)) {
-                    order.setStatus(OrderStatus.SELECTION);
-                    log.info("ZASHEL");
-                    flag = true;
-                }
-
-            } else {
-                log.info("Property {} already exist in order {}", propertyId, orderId);
-            }
+    private void updateOrderStatusToSelection(Order order) {
+        if (order.getStatus() != OrderStatus.SELECTION) {
+            order.setStatus(OrderStatus.SELECTION);
+            log.info("Order status changed to SELECTION for order {}", order.getId());
         }
-
-        return save(order);
     }
 
     @Override
