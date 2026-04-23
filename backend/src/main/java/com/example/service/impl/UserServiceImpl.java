@@ -2,7 +2,9 @@ package com.example.service.impl;
 
 import com.example.exception.*;
 import com.example.model.User;
-import com.example.model.dto.request.UserUpdateRequest;
+import com.example.model.dto.request.update.UserUpdateRequest;
+import com.example.model.dto.response.DealDto;
+import com.example.model.dto.response.OrderDto;
 import com.example.model.dto.response.UserDto;
 import com.example.repository.UserRepository;
 import com.example.service.LocalStorageService;
@@ -176,6 +178,22 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         user.setPassword(passwordEncoder.encode(newPassword));
 
         return userRepository.save(user);
+    }
+
+    @Override
+    public List<OrderDto> getOrders(User user) {
+        return user.getOrders()
+                .stream()
+                .map(OrderDto::new)
+                .toList();
+    }
+
+    @Override
+    public List<DealDto> getDeals(User user) {
+        return user.getDeals()
+                .stream()
+                .map((DealDto::new))
+                .toList();
     }
 
     @Override

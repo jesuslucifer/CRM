@@ -3,7 +3,7 @@ package com.example.service.impl;
 import com.example.exception.CompanyNotFoundException;
 import com.example.exception.PropertyAlreadyExistsException;
 import com.example.model.Deal;
-import com.example.model.dto.request.DealUpdateRequest;
+import com.example.model.dto.request.update.DealUpdateRequest;
 import com.example.repository.DealRepository;
 import com.example.service.DealService;
 import com.example.service.UserService;

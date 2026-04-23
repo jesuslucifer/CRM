@@ -1,7 +1,7 @@
 package com.example.service;
 
 import com.example.model.Client;
-import com.example.model.dto.request.ClientCreateRequest;
+import com.example.model.dto.request.create.ClientCreateRequest;
 
 public interface ClientService {
     Client save(Client client);

@@ -2,7 +2,7 @@ package com.example.service.impl;
 
 import com.example.exception.PropertyNotFoundException;
 import com.example.model.OrderProperty;
-import com.example.model.dto.request.OrderPropertyUpdateRequest;
+import com.example.model.dto.request.update.OrderPropertyUpdateRequest;
 import com.example.repository.OrderPropertyRepository;
 import com.example.service.OrderPropertyService;
 import jakarta.transaction.Transactional;

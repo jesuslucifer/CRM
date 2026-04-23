@@ -2,7 +2,7 @@ package com.example.service.impl;
 
 import com.example.exception.*;
 import com.example.model.*;
-import com.example.model.dto.request.PropertyCreateRequest;
+import com.example.model.dto.request.create.PropertyCreateRequest;
 import com.example.model.enums.DealType;
 import com.example.model.enums.PropertyStatus;
 import com.example.model.enums.PropertyType;

@@ -1,7 +1,7 @@
 package com.example.controller;
 
 import com.example.model.*;
-import com.example.model.dto.request.DealCreateRequest;
+import com.example.model.dto.request.create.DealCreateRequest;
 import com.example.model.dto.response.SuccessResponse;
 import com.example.service.*;
 import lombok.RequiredArgsConstructor;

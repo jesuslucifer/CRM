@@ -1,7 +1,7 @@
 package com.example.service;
 
 import com.example.model.Deal;
-import com.example.model.dto.request.DealUpdateRequest;
+import com.example.model.dto.request.update.DealUpdateRequest;
 
 public interface DealService {
     Deal create(Deal deal);

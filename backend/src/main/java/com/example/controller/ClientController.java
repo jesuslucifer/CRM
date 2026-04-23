@@ -1,6 +1,6 @@
 package com.example.controller;
 
-import com.example.model.dto.request.ClientCreateRequest;
+import com.example.model.dto.request.create.ClientCreateRequest;
 import com.example.model.dto.response.ClientDto;
 import com.example.model.dto.response.ClientWithOrdersResponse;
 import com.example.model.dto.response.SuccessResponse;

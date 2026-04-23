@@ -2,7 +2,7 @@ package com.example.controller;
 
 import com.example.model.Client;
 import com.example.model.Company;
-import com.example.model.dto.request.ClientCreateRequest;
+import com.example.model.dto.request.create.ClientCreateRequest;
 import com.example.model.dto.response.ClientDto;
 import com.example.service.ClientService;
 import com.example.service.CompanyService;

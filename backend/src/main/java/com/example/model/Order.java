@@ -36,6 +36,10 @@ public class Order {
     @Builder.Default
     private List<OrderProperty> properties = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "agent_id")
+    private User agent;
+
     @Column(name = "city")
     private String city;
 

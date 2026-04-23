@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-column-agent-id-in-order.yaml
+      author: jesuslucifer
+      changes:
+        - addColumn:
+            tableName: orders
+            columns:
+              - column:
+                  name: agent_id
+                  type: BIGINT

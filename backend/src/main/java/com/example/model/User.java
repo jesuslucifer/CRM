@@ -56,12 +56,24 @@ public class User implements UserDetails {
     @Builder.Default
     private List<Deal> deals = new ArrayList<>();
 
+    @OneToMany(mappedBy = "agent", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<Order> orders = new ArrayList<>();
+
     public void addDeal(Deal deal) {
         deals.add(deal);
     }
 
     public void removeDeal(Deal deal) {
         deals.remove(deal);
+    }
+
+    public void addOrder(Order order) {
+        orders.add(order);
+    }
+
+    public void removeOrder(Order order) {
+        orders.remove(order);
     }
 
     public List<Company> getCompanies() {

@@ -2,7 +2,7 @@ package com.example.service;
 
 import com.example.model.Company;
 import com.example.model.Property;
-import com.example.model.dto.request.PropertyCreateRequest;
+import com.example.model.dto.request.create.PropertyCreateRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

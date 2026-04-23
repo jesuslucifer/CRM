@@ -3,7 +3,7 @@ package com.example.controller;
 import com.example.model.Client;
 import com.example.model.Company;
 import com.example.model.Order;
-import com.example.model.dto.request.OrderCreateRequest;
+import com.example.model.dto.request.create.OrderCreateRequest;
 import com.example.model.dto.response.OrderDto;
 import com.example.model.enums.OrderStatus;
 import com.example.service.ClientService;

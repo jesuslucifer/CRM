@@ -1,6 +1,6 @@
 package com.example.controller;
 
-import com.example.model.dto.request.PropertyCreateRequest;
+import com.example.model.dto.request.create.PropertyCreateRequest;
 import com.example.model.dto.response.PropertyResponse;
 import com.example.model.dto.response.SuccessResponse;
 import com.example.service.CompanyService;
@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/property/{propertyId}")

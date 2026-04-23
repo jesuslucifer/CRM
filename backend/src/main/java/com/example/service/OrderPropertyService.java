@@ -1,7 +1,7 @@
 package com.example.service;
 
 import com.example.model.OrderProperty;
-import com.example.model.dto.request.OrderPropertyUpdateRequest;
+import com.example.model.dto.request.update.OrderPropertyUpdateRequest;
 
 public interface OrderPropertyService {
     OrderProperty save(OrderProperty orderProperty);

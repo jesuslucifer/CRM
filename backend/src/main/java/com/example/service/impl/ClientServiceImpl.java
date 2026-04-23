@@ -2,7 +2,7 @@ package com.example.service.impl;
 
 import com.example.exception.*;
 import com.example.model.Client;
-import com.example.model.dto.request.ClientCreateRequest;
+import com.example.model.dto.request.create.ClientCreateRequest;
 import com.example.repository.ClientRepository;
 import com.example.service.ClientService;
 import lombok.RequiredArgsConstructor;

@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 public class OrderDto {
     private Long id;
     private ClientDto client;
+    private UserMinimalDto agent;
     private String city;
     private List<OrderPropertyResponse> properties;
     private PropertyType propertyType;
@@ -23,6 +24,7 @@ public class OrderDto {
     public OrderDto(Order order) {
         this.id = order.getId();
         this.client = new ClientDto(order.getClient());
+        this.agent = new UserMinimalDto(order.getAgent());
         this.city = order.getCity();
         this.propertyType = order.getPropertyType();
         this.dealType = order.getDealType();

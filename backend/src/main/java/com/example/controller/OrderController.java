@@ -1,7 +1,7 @@
 package com.example.controller;
 
-import com.example.model.dto.request.OrderCreateRequest;
-import com.example.model.dto.request.OrderPropertyUpdateRequest;
+import com.example.model.dto.request.update.OrderPropertyUpdateRequest;
+import com.example.model.dto.request.update.OrderUpdateRequest;
 import com.example.model.dto.response.OrderDto;
 import com.example.model.dto.response.SuccessResponse;
 import com.example.service.CompanyService;
@@ -28,7 +28,7 @@ public class OrderController {
 
     @PutMapping
     public ResponseEntity<?> update(@PathVariable Long orderId,
-                                    @RequestBody OrderCreateRequest request) {
+                                    @RequestBody OrderUpdateRequest request) {
         return ResponseEntity.ok(
                 new OrderDto(orderService.update(orderId, request)));
     }

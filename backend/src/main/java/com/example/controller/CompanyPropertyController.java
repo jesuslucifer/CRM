@@ -2,7 +2,7 @@ package com.example.controller;
 
 import com.example.model.Company;
 import com.example.model.Property;
-import com.example.model.dto.request.PropertyCreateRequest;
+import com.example.model.dto.request.create.PropertyCreateRequest;
 import com.example.model.dto.response.ImportResult;
 import com.example.model.dto.response.PropertyResponse;
 import com.example.service.CompanyService;

@@ -2,8 +2,8 @@ package com.example.service.impl;
 
 import com.example.exception.PropertyNotFoundException;
 import com.example.model.*;
-import com.example.model.dto.request.OrderCreateRequest;
-import com.example.model.dto.request.OrderPropertyUpdateRequest;
+import com.example.model.dto.request.update.OrderPropertyUpdateRequest;
+import com.example.model.dto.request.update.OrderUpdateRequest;
 import com.example.model.enums.DealStatus;
 import com.example.model.enums.OrderPropertyStatus;
 import com.example.model.enums.OrderStatus;
@@ -38,7 +38,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order update(Long orderId, OrderCreateRequest request) {
+    public Order update(Long orderId, OrderUpdateRequest request) {
         Order order = getById(orderId);
 
         order.setCity(request.getCity());
@@ -47,6 +47,8 @@ public class OrderServiceImpl implements OrderService {
         order.setDescription(request.getDescription());
         order.setStatus(request.getStatus());
 
+        User agent = userService.getById(request.getAgentId());
+        order.setAgent(agent);
 
         return save(order);
     }

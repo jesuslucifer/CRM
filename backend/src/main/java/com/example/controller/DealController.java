@@ -1,7 +1,7 @@
 package com.example.controller;
 
 import com.example.model.Deal;
-import com.example.model.dto.request.DealUpdateRequest;
+import com.example.model.dto.request.update.DealUpdateRequest;
 import com.example.model.dto.response.DealDto;
 import com.example.model.dto.response.SuccessResponse;
 import com.example.service.CompanyService;

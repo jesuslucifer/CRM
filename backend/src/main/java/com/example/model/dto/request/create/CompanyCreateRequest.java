@@ -1,4 +1,4 @@
-package com.example.model.dto.request;
+package com.example.model.dto.request.create;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;

@@ -2,6 +2,7 @@ package com.example.controller;
 
 import com.example.model.*;
 import com.example.model.dto.request.*;
+import com.example.model.dto.request.create.CompanyCreateRequest;
 import com.example.model.dto.response.*;
 import com.example.model.enums.EmployeeRole;
 import com.example.security.SecurityUtil;

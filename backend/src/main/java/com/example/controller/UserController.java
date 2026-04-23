@@ -4,7 +4,7 @@ import com.example.model.PasswordResetToken;
 import com.example.model.User;
 import com.example.model.dto.request.EmailPasswordUsernameRequest;
 import com.example.model.dto.request.PasswordRequest;
-import com.example.model.dto.request.UserUpdateRequest;
+import com.example.model.dto.request.update.UserUpdateRequest;
 import com.example.model.dto.response.ErrorResponse;
 import com.example.model.dto.response.SuccessResponse;
 import com.example.model.dto.response.UserDto;
@@ -30,7 +30,6 @@ public class UserController {
     private final PasswordResetTokenService passwordResetTokenService;
     private final EmailService emailService;
     private final TokenService tokenService;
-    private final JwtService jwtService;
 
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser() {
@@ -164,6 +163,20 @@ public class UserController {
                 request.getPassword());
 
         return ResponseEntity.ok(new UserDto(user));
+    }
+
+    @GetMapping("/me/orders")
+    public ResponseEntity<?> getOrders() {
+        User user = SecurityUtil.getCurrentUser();
+
+        return ResponseEntity.ok(userService.getOrders(user));
+    }
+
+    @GetMapping("/me/deals")
+    public ResponseEntity<?> getDeals() {
+        User user = SecurityUtil.getCurrentUser();
+
+        return ResponseEntity.ok(userService.getDeals(user));
     }
 
     private String getAppUrl(HttpServletRequest request) {

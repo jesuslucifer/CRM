@@ -1,7 +1,9 @@
 package com.example.service;
 
 import com.example.model.User;
-import com.example.model.dto.request.UserUpdateRequest;
+import com.example.model.dto.request.update.UserUpdateRequest;
+import com.example.model.dto.response.DealDto;
+import com.example.model.dto.response.OrderDto;
 import com.example.model.dto.response.UserDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,4 +29,6 @@ public interface UserService {
     User changePassword(User user, String newPassword);
     User changeEmail(Long id, String newEmail, String password);
     User changePasswordWithConfirmPassword(User user, String newPassword, String confirmPassword);
+    List<OrderDto> getOrders(User user);
+    List<DealDto> getDeals(User user);
 }
