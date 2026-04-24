@@ -24,7 +24,9 @@ public class OrderDto {
     public OrderDto(Order order) {
         this.id = order.getId();
         this.client = new ClientDto(order.getClient());
-        this.agent = new UserMinimalDto(order.getAgent());
+        if (order.getAgent() != null) {
+            this.agent = new UserMinimalDto(order.getAgent());
+        }
         this.city = order.getCity();
         this.propertyType = order.getPropertyType();
         this.dealType = order.getDealType();

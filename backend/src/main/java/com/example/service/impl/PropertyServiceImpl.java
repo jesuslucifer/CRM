@@ -164,19 +164,21 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     @Override
-    public Property addImage(Long id, MultipartFile file) {
+    public Property addImage(Long id, List<MultipartFile> files) {
         Property property = getById(id);
 
-        if (file.isEmpty()) {
+        if (files.isEmpty()) {
             throw new UploadFileIsEmptyException();
         }
 
-        if (!file.getContentType().startsWith("image")) {
-            throw new InvalidFileTypeException();
-        }
+        for (MultipartFile file : files) {
+            if (!file.getContentType().startsWith("image")) {
+                throw new InvalidFileTypeException();
+            }
 
-        String filename = "property_" + property.getId() + "_" + property.getTitle();
-        String fileUrl = localStorageService.uploadFile(file, filename);
+            String filename = "property_" + property.getId() + "_" + property.getTitle();
+            String fileUrl = localStorageService.uploadFile(file, filename);
+        }
 
         return save(property);
     }
