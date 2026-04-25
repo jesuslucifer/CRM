@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/property/{propertyId}")
@@ -39,5 +42,13 @@ public class PropertyController {
         return ResponseEntity.ok(new SuccessResponse(
                 "Недвижимость удалена",
                 HttpStatus.OK));
+    }
+
+    @PutMapping("/images")
+    public ResponseEntity<?> addImages(@PathVariable Long propertyId,
+                                       @RequestParam("image") List<MultipartFile> files) {
+        propertyService.addImage(propertyId, files);
+
+        return ResponseEntity.ok(new SuccessResponse("Изображения добавлены", HttpStatus.OK));
     }
 }

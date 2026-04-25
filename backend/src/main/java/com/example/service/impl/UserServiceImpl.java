@@ -102,7 +102,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         }
 
         String filename = "avatar_user_" + user.getId() + "_" + System.currentTimeMillis();
-        String fileUrl = localStorageService.uploadFile(file, filename);
+        String fileUrl = localStorageService.uploadAvatar(file, filename);
 
         user.setAvatarUrl(fileUrl);
         userRepository.save(user);

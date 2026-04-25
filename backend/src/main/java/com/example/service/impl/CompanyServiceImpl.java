@@ -67,7 +67,7 @@ public class CompanyServiceImpl implements CompanyService {
         }
 
         String filename = "avatar_company_" + company.getId() + "_" + System.currentTimeMillis();
-        String fileUrl = localStorageService.uploadFile(file, filename);
+        String fileUrl = localStorageService.uploadAvatar(file, filename);
 
         company.setAvatarUrl(fileUrl);
         save(company);

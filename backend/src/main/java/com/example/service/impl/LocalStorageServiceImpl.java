@@ -24,7 +24,7 @@ public class LocalStorageServiceImpl implements LocalStorageService {
     private String serverPort;
 
     @Override
-    public String uploadFile(MultipartFile file, String fileName) {
+    public String uploadAvatar(MultipartFile file, String fileName) {
         try {
             Path path = Paths.get(uploadDirectory);
 
@@ -66,9 +66,34 @@ public class LocalStorageServiceImpl implements LocalStorageService {
             Files.createDirectories(Path.of(path + "docs/"));
             Files.createDirectories(Path.of(path + "images/"));
 
+            System.out.println(path);
+
             return path;
         } catch (IOException e) {
             throw new RuntimeException(e); //TODO EXCEPTION
         }
+    }
+
+    @Override
+    public String uploadFile(MultipartFile file, String fileName, Long companyId, Long propertyId) {
+        Path path = Path.of(uploadDirectory, "/companies/company_" + companyId + "/property_" + propertyId + "/images/");
+
+        if (!Files.exists(path)) {
+            try {
+                Files.createDirectories(path);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        Path filePath = path.resolve(fileName);
+
+        try {
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return filePath.toString();
     }
 }

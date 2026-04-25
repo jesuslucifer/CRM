@@ -6,6 +6,7 @@ import com.example.model.dto.request.create.PropertyCreateRequest;
 import com.example.model.enums.DealType;
 import com.example.model.enums.PropertyStatus;
 import com.example.model.enums.PropertyType;
+import com.example.repository.PropertyImageRepository;
 import com.example.repository.PropertyRepository;
 import com.example.service.LocalStorageService;
 import com.example.service.PropertyService;
@@ -18,10 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -31,6 +29,7 @@ import java.util.stream.Collectors;
 public class PropertyServiceImpl implements PropertyService {
     private final PropertyRepository propertyRepository;
     private final LocalStorageService localStorageService;
+    private final PropertyImageRepository propertyImageRepository;
 
     @Override
     public Property save(Property property) {
@@ -144,9 +143,10 @@ public class PropertyServiceImpl implements PropertyService {
                 }
             }
 
-            // Сохраняем все изменения одним батчем
             if (!importedProperties.isEmpty()) {
-                propertyRepository.saveAll(importedProperties);
+                for (Property property : importedProperties) {
+                    create(property);
+                }
             }
 
             log.info("Импорт завершен. Создано: {}, Обновлено: {}, Пропущено: {}",
@@ -171,13 +171,36 @@ public class PropertyServiceImpl implements PropertyService {
             throw new UploadFileIsEmptyException();
         }
 
+        Long maxSortOrder = propertyImageRepository.
+                findMaxSortOrderByPropertyId(property.getId());
+
+        Long sortOrder = maxSortOrder != null ? maxSortOrder + 1 : 0;
+
+        boolean isFirstImage = property.getImages().isEmpty();
+
         for (MultipartFile file : files) {
             if (!file.getContentType().startsWith("image")) {
                 throw new InvalidFileTypeException();
             }
 
-            String filename = "property_" + property.getId() + "_" + property.getTitle();
-            String fileUrl = localStorageService.uploadFile(file, filename);
+            String filename = "property_" + property.getId() + "_" + generateUniqueFilename();
+            String fileUrl = localStorageService.uploadFile(file, filename, property.getCompany().getId(), property.getId());
+
+            PropertyImage propertyImage = PropertyImage.builder()
+                    .property(property)
+                    .filePath(fileUrl)
+                    .originalFilename(file.getOriginalFilename())
+                    .storedFilename(filename)
+                    .fileSize(file.getSize())
+                    .contentType(file.getContentType())
+                    .sortOrder(sortOrder++)
+                    .build();
+
+            propertyImage.setIsMain(isFirstImage && propertyImage.getSortOrder() == 0);
+
+            property.addImage(propertyImage);
+
+            isFirstImage = false;
         }
 
         return save(property);
@@ -257,5 +280,10 @@ public class PropertyServiceImpl implements PropertyService {
             log.error("Ошибка при обновлении Property из CSV", e);
             throw new IllegalArgumentException("Некорректные данные в CSV", e);
         }
+    }
+
+    private String generateUniqueFilename() {
+        return UUID.randomUUID().toString() + "_" +
+                System.currentTimeMillis();
     }
 }

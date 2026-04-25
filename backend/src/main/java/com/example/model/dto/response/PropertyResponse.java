@@ -7,6 +7,8 @@ import com.example.model.enums.PropertyType;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 public class PropertyResponse {
@@ -28,6 +30,7 @@ public class PropertyResponse {
     private int totalFloors;
     private int yearBuilt;
     private PropertyStatus propertyStatus;
+    private List<ImageDto> images;
 
     public PropertyResponse(Property property, Company company) {
         this.id = property.getId();
@@ -68,5 +71,9 @@ public class PropertyResponse {
         this.totalFloors = property.getTotalFloors();
         this.yearBuilt = property.getYearBuilt();
         this.propertyStatus = property.getStatus();
+        this.images = property.getImages()
+                .stream()
+                .map(ImageDto::new)
+                .collect(Collectors.toList());
     }
 }

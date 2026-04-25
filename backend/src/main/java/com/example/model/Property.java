@@ -12,6 +12,8 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Builder
@@ -82,4 +84,16 @@ public class Property {
     @ColumnDefault("now()")
     @Column(name = "created_at")
     private Instant createdAt;
+
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OrderBy("sortOrder ASC")
+    private List<PropertyImage> images = new ArrayList<>();
+
+    public void addImage(PropertyImage image) {
+        this.images.add(image);
+    }
+
+    public void removeImage(PropertyImage image) {
+        this.images.remove(image);
+    }
 }
