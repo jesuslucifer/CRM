@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-order-properties.yaml
+      author: jesuslucifer
+      changes:
+        - createTable:
+            tableName: order_properties
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: order_id
+                  type: BIGINT
+              - column:
+                  name: property_id
+                  type: BIGINT
+              - column:
+                  name: status
+                  type: NVARCHAR(20)

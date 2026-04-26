@@ -15,7 +15,7 @@ import java.nio.file.StandardCopyOption;
 @Service
 public class LocalStorageServiceImpl implements LocalStorageService {
     @Value("${backend.upload.dir}")
-    private String uploadDir;
+    private String uploadDirectory;
 
     @Value("${server.address:localhost}")
     private String serverAddress;
@@ -24,9 +24,9 @@ public class LocalStorageServiceImpl implements LocalStorageService {
     private String serverPort;
 
     @Override
-    public String uploadFile(MultipartFile file, String fileName) {
+    public String uploadAvatar(MultipartFile file, String fileName) {
         try {
-            Path path = Paths.get(uploadDir);
+            Path path = Paths.get(uploadDirectory);
 
             if (!Files.exists(path)) {
                 Files.createDirectories(path);
@@ -39,5 +39,61 @@ public class LocalStorageServiceImpl implements LocalStorageService {
         } catch (IOException e) {
             throw new UploadFileException();
         }
+    }
+
+    @Override
+    public String createCompanyDirectory(Long id) {
+        try {
+            String path = uploadDirectory +
+                    "/companies/" + "company_"
+                    + id + "/";
+            Files.createDirectories(Path.of(path));
+            Files.createDirectories(Path.of(path + "docs/"));
+
+            return path;
+        } catch (IOException e) {
+            throw new RuntimeException(e); //TODO EXCEPTION
+        }
+    }
+
+    @Override
+    public String createPropertyDirectory(Long propertyId, Long companyId) {
+        try {
+            String path = uploadDirectory +
+                    "/companies/" + "company_" + companyId
+                    + "/property_" + propertyId + "/";
+            Files.createDirectories(Path.of(path));
+            Files.createDirectories(Path.of(path + "docs/"));
+            Files.createDirectories(Path.of(path + "images/"));
+
+            System.out.println(path);
+
+            return path;
+        } catch (IOException e) {
+            throw new RuntimeException(e); //TODO EXCEPTION
+        }
+    }
+
+    @Override
+    public String uploadFile(MultipartFile file, String fileName, Long companyId, Long propertyId) {
+        Path path = Path.of(uploadDirectory, "/companies/company_" + companyId + "/property_" + propertyId + "/images/");
+
+        if (!Files.exists(path)) {
+            try {
+                Files.createDirectories(path);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        Path filePath = path.resolve(fileName);
+
+        try {
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return filePath.toString();
     }
 }

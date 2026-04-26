@@ -1,10 +1,10 @@
-package com.example.model.dto.request;
+package com.example.model.dto.request.create;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 @Data
 @RequiredArgsConstructor
-public class CreateCompanyRequest {
+public class CompanyCreateRequest {
     String name;
 }
