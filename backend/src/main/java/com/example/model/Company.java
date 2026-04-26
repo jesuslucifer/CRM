@@ -58,7 +58,7 @@ public class Company {
                 .role(role)
                 .build();
         employees.add(companyEmployee);
-        user.getCompanyEmployees().add(companyEmployee); // Синхронизация обеих сторон
+        // user.getCompanyEmployees().add(companyEmployee); // Синхронизация обеих сторон
     }
 
     public void removeEmployee(User user) {
