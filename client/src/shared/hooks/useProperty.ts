@@ -18,10 +18,10 @@ export function useCreateProperty(id: number) {
     })
     return { mutate, isPending }
 }
-export function useGetAllProperty(id: number) {
+export function useGetCompanyProperty(id: number) {
     return useQuery({
         queryKey: ['property', id],
-        queryFn: () => PropertyService.getAllProperty(id),
+        queryFn: () => PropertyService.getCompanyProperty(id),
     })
 }
 export function useGetPropertyById(id: number) {

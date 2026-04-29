@@ -28,9 +28,9 @@ import {
     SelectItem,
     SelectValue
 } from "@/components/ui/select"
-import type { IClient } from "@/service/clients.service"
 import { useCreateClient } from "../hooks/useClient"
 import { useCurrentCompany } from "../hooks/useCompany"
+import type { IClient } from "@/types/client.interface"
 
 
 export default function CreateClientDialog() {
@@ -40,7 +40,7 @@ export default function CreateClientDialog() {
         defaultValues: {
             firstName: "",
             lastName: "",
-            phone: 0,
+            phone: undefined,
             email: "",
             clientType: "",
             clientSource: "",
@@ -77,7 +77,6 @@ export default function CreateClientDialog() {
                         className="space-y-6"
                     >
 
-                        {/* --- ОСНОВНАЯ ИНФОРМАЦИЯ --- */}
                         <div className="space-y-4">
 
                             <h3 className="text-sm font-semibold text-muted-foreground">
@@ -86,7 +85,6 @@ export default function CreateClientDialog() {
 
                             <div className="grid grid-cols-2 gap-4">
 
-                                {/* firstName */}
                                 <FormField
                                     control={form.control}
                                     name="firstName"
@@ -101,7 +99,6 @@ export default function CreateClientDialog() {
                                     )}
                                 />
 
-                                {/* lastName */}
                                 <FormField
                                     control={form.control}
                                     name="lastName"
@@ -120,7 +117,6 @@ export default function CreateClientDialog() {
 
                         </div>
 
-                        {/* --- КОНТАКТЫ --- */}
                         <div className="space-y-4">
 
                             <h3 className="text-sm font-semibold text-muted-foreground">
@@ -129,7 +125,6 @@ export default function CreateClientDialog() {
 
                             <div className="grid grid-cols-2 gap-4">
 
-                                {/* phone */}
                                 <FormField
                                     control={form.control}
                                     name="phone"
@@ -138,7 +133,9 @@ export default function CreateClientDialog() {
                                             <FormLabel>Телефон</FormLabel>
                                             <FormControl>
                                                 <Input
+                                                    type="tel"
                                                     placeholder="+7 999 999 99 99"
+                                                    defaultValue=''
                                                     {...field}
                                                     onChange={(e) =>
                                                         field.onChange(Number(e.target.value))
@@ -149,7 +146,6 @@ export default function CreateClientDialog() {
                                     )}
                                 />
 
-                                {/* email */}
                                 <FormField
                                     control={form.control}
                                     name="email"
@@ -171,7 +167,6 @@ export default function CreateClientDialog() {
 
                         </div>
 
-                        {/* --- CRM ДАННЫЕ --- */}
                         <div className="space-y-4">
 
                             <h3 className="text-sm font-semibold text-muted-foreground">
@@ -180,7 +175,6 @@ export default function CreateClientDialog() {
 
                             <div className="grid grid-cols-2 gap-4">
 
-                                {/* clientType */}
                                 <FormField
                                     control={form.control}
                                     name="clientType"
@@ -211,7 +205,6 @@ export default function CreateClientDialog() {
                                     )}
                                 />
 
-                                {/* clientSource */}
                                 <FormField
                                     control={form.control}
                                     name="clientSource"
@@ -248,7 +241,6 @@ export default function CreateClientDialog() {
 
                         </div>
 
-                        {/* --- NOTES --- */}
                         <FormField
                             control={form.control}
                             name="notes"
@@ -266,7 +258,6 @@ export default function CreateClientDialog() {
                             )}
                         />
 
-                        {/* FOOTER */}
                         <DialogFooter>
 
                             <Button

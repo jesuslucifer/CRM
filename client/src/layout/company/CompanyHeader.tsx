@@ -35,12 +35,10 @@ export default function CompanyHeader() {
 
           <nav className="hidden xl:flex items-center gap-2">
             {[
-              // { to: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-              // { to: "company", label: "О компании", icon: Building2 },
-              // { to: "employees", label: "Сотрудники", icon: Users },
+
               { to: "crm/deals", label: "Сделка", icon: Handshake },
               { to: "crm/kanban", label: "Kanban", icon: KanbanSquare },
-              { to: "crm/leads", label: "Заявки", icon: Users },
+              { to: "crm/orders", label: "Заявки", icon: Users },
               { to: "crm/clients", label: "Клиенты", icon: Contact },
             ].map(({ to, label, icon: Icon }) => (
               <NavLink

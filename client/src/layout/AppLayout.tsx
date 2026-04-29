@@ -1,8 +1,5 @@
 import { Outlet } from "react-router"
-import SideBar from "@/layout/SideBar"
 import { ToastContainer } from "react-toastify"
-import { useState } from "react";
-import { LayoutDashboard } from "lucide-react";
 import Header from "./Header";
 
 export default function AppLayout() {

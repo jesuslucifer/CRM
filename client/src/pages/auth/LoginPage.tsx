@@ -24,7 +24,6 @@ export default function LoginPage() {
   return (
     <div className="relative flex items-center justify-center min-h-screen bg-[url('../../../public/ff0ee979e682bbb84cce4e725a999682.jpg')] bg-cover overflow-hidden">
 
-      {/* Background glow */}
       <div className="absolute w-[600px] h-[600px] bg-indigo-600/20 blur-[140px] rounded-full -top-40 -left-40" />
       <div className="absolute w-[500px] h-[500px] bg-purple-600/20 blur-[140px] rounded-full bottom-0 right-0" />
 
@@ -33,7 +32,7 @@ export default function LoginPage() {
           <CardTitle className="text-3xl font-semibold text-white">
             Добро пожаловать
           </CardTitle>
-          <CardDescription className="text-slate-400">
+          <CardDescription className="text-slate-700">
             Войдите в свой аккаунт
           </CardDescription>
         </CardHeader>
@@ -45,7 +44,7 @@ export default function LoginPage() {
               name="usernameOrEmail"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-slate-300">
+                  <FormLabel className="text-white">
                     Email или имя пользователя
                   </FormLabel>
                   <FormControl>
@@ -65,7 +64,7 @@ export default function LoginPage() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-slate-300">
+                  <FormLabel className="text-white">
                     Пароль
                   </FormLabel>
                   <FormControl>

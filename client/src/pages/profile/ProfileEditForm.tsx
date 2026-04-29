@@ -76,7 +76,7 @@ export default function ProfileEditForm({ user }: { user: IUser | undefined }) {
           )}
         />
 
-        <FormField
+        {/* <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
@@ -92,7 +92,7 @@ export default function ProfileEditForm({ user }: { user: IUser | undefined }) {
               </FormControl>
             </FormItem>
           )}
-        />
+        /> */}
 
         <div className="md:col-span-2 flex justify-end">
           <Button

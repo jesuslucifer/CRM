@@ -1,25 +1,18 @@
-
-
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import PropertyCard from "@/features/property/PropertyCard"
 import PropertyStats from "@/features/property/PropertyStats"
 import CreatePropertyDialog from "@/shared/forms/CreatePropertyDilog"
 import { useCurrentCompany } from "@/shared/hooks/useCompany"
 import { useUploadFile } from "@/shared/hooks/useFile"
-import { useGetAllProperty } from "@/shared/hooks/useProperty"
-import { Upload, type IUpload, type IUploadFile } from "@/shared/widgets/uploadFile"
+import { useGetCompanyProperty } from "@/shared/hooks/useProperty"
 
 export function PropertyPage() {
 
     const { data: company } = useCurrentCompany()
-    const { data: properties, isLoading } = useGetAllProperty(company?.id!)
+    const { data: properties, isLoading } = useGetCompanyProperty(company?.id!)
     const { mutate: uploadFile } = useUploadFile(company?.id!)
     const handleUploadFile = (event: any) => {
         const file: File = event.target.files[0];
         uploadFile(file)
-        console.log(`Файл: ${file.name}, Размер: ${file.size}Б, Тип: ${file.type}`);
-
     }
     if (isLoading) return <div>Loading properties...</div>
 
@@ -40,13 +33,10 @@ export function PropertyPage() {
                 </div>
 
                 <CreatePropertyDialog />
-                {/* <Upload /> */}
                 <label >
                     <input type="file" accept=".csv" onChange={(e) => handleUploadFile(e)} />
                 </label>
-                {/* <Button>
-                    Выгрузить из csv
-                </Button> */}
+
             </div>
 
             <PropertyStats properties={properties} />

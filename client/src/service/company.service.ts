@@ -1,29 +1,9 @@
 import { axiosWithAuth } from "@/api/api.interceptors"
+import type { ICompany, ICompanyById, ICreateCompany, ICreateEmployee } from "@/types/company.interface";
 import type { IUser } from "@/types/user.interface";
 
 const API_URL = '/company';
-export interface ICreateCompany {
-    name: string;
-}
-export interface ICompany {
-    name: string;
-}
-export interface IEmployees extends IUser {
 
-    role: string
-}
-export interface ICreateEmployee {
-    username: string;
-    role: string
-}
-
-export interface ICompanyById {
-    id: number;
-    name: string;
-    avatar?: string
-
-    employees: IEmployees[]
-}
 export const CompanyService = {
     async createCompany(payload: ICreateCompany) {
         const { data } = await axiosWithAuth.post<ICreateCompany>(API_URL + '/create', payload);

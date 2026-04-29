@@ -21,12 +21,13 @@ import { useCurrentCompany } from "@/shared/hooks/useCompany"
 import { useGetCompanyClient } from "@/shared/hooks/useClient"
 import { orderSchema, type OrderFormData } from "../schemas/order.schema"
 import { useCreateOrder } from "../hooks/useOrder"
+import { useProfile } from "../hooks/useProfile"
 
 export default function CreateOrderDialog() {
 
     const { data: company } = useCurrentCompany()
     const { data: clients } = useGetCompanyClient(company?.id!)
-
+    const me = useProfile()
     const { mutate, isPending } = useCreateOrder(company?.id!)
 
     const form = useForm<OrderFormData>({
@@ -54,7 +55,7 @@ export default function CreateOrderDialog() {
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
 
-                        {/* CLIENT */}
+
                         <FormField
                             control={form.control}
                             name="clientId"
@@ -89,7 +90,7 @@ export default function CreateOrderDialog() {
                             )}
                         />
 
-                        {/* CITY */}
+
                         <FormField
                             control={form.control}
                             name="city"
@@ -103,7 +104,7 @@ export default function CreateOrderDialog() {
                             )}
                         />
 
-                        {/* PROPERTY TYPE */}
+
                         <FormField
                             control={form.control}
                             name="propertyType"
@@ -129,7 +130,6 @@ export default function CreateOrderDialog() {
                             )}
                         />
 
-                        {/* DEAL TYPE */}
                         <FormField
                             control={form.control}
                             name="dealType"
@@ -154,7 +154,6 @@ export default function CreateOrderDialog() {
                             )}
                         />
 
-                        {/* DESCRIPTION */}
                         <FormField
                             control={form.control}
                             name="description"

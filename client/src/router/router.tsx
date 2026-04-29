@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate, Outlet } from "react-router"
+import { createBrowserRouter, Navigate } from "react-router"
 import { getAccessToken } from "@/service/auth-token.service"
 
 
@@ -6,8 +6,8 @@ import DashboardPage from "@/pages/dashboard/DashboardPage"
 import DealsListPage from "@/pages/deals/DealsListPage"
 import DealsKanbanPage from "@/pages/deals/DealsKanbanPage"
 import DealDetailsPage from "@/pages/deals/DealsDetailsPage"
-import LeadsListPage from "@/pages/leadsList/LeadsListPage"
-import ContactsListPage from "@/pages/clients/ClientsListPage"
+import OrderPage from "@/pages/order/OrderPage"
+import ContactsListPage from "@/pages/clients/ClientsPage"
 import ProfilePage from "@/pages/profile/ProfilePage"
 import SettingsPage from "@/pages/settings/SettingsPage"
 
@@ -17,12 +17,14 @@ import ForgotPasswordPage from "@/pages/auth/ForgotPasswordPage"
 import AuthLayout from "@/layout/AuthLayout"
 import AppLayout from "@/layout/AppLayout"
 import { PrivateRoute } from "./privateRoutes"
-import CompanyLayout from "@/layout/CompanyLayout"
+import CompanyLayout from "@/layout/company/CompanyLayout"
 import CompanyPage from "@/pages/company/CompanyPage"
 import CompanyList from "@/pages/company/CompanyListPage"
 import CompanyEmployeesPage from "@/pages/employees/CompanyEmployeesPage"
 import { PropertyPage } from "@/pages/property/PropertyPage"
 import { PropertyDetailsPage } from "@/pages/property/PropertyDetailsPage"
+import OrderLayout from "@/layout/order/OrderLayout"
+import OrderKanbanPage from "@/pages/order/OrderKanbanPage"
 
 function requireAuth() {
     const token = getAccessToken()
@@ -77,7 +79,15 @@ export const router = createBrowserRouter([
                             { path: "deals", element: <DealsListPage /> },
                             { path: "kanban", element: <DealsKanbanPage /> },
                             { path: "deals/:id", element: <DealDetailsPage /> },
-                            { path: "leads", element: <LeadsListPage /> },
+                            {
+                                path: "orders",
+                                element: <OrderLayout />,
+                                children: [
+                                    { index: true, element: <Navigate to="kanban" replace /> },
+                                    { path: "list", element: <OrderPage /> },
+                                    { path: "kanban", element: <OrderKanbanPage /> },
+                                ]
+                            },
                             { path: "clients", element: <ContactsListPage /> },
 
                         ]

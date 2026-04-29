@@ -2,11 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogHeader, DialogTrigger, DialogContent, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import type { ICreateCompany } from "@/service/company.service";
 import { DialogClose } from "@radix-ui/react-dialog";
 
 import { useForm } from "react-hook-form";
 import { useCreateCompany } from "../hooks/useCompany";
+import type { ICreateCompany } from "@/types/company.interface";
 
 
 
@@ -31,7 +31,6 @@ export default function CreateCompanyDialog() {
               <DialogHeader>
                 <DialogTitle>Добавить компанию</DialogTitle>
               </DialogHeader>
-              <DialogDescription>sad</DialogDescription>
 
               <div className="grid gap-4">
                 <div className="grid gap-3">
@@ -40,7 +39,7 @@ export default function CreateCompanyDialog() {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Имя пользователя</FormLabel>
+                        <FormLabel>Имя компании</FormLabel>
                         <FormControl>
                           <Input placeholder="username123"    {...field} value={field.value || ''} />
                         </FormControl>

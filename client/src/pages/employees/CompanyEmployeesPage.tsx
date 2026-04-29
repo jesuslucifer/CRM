@@ -32,12 +32,12 @@ import {
     Pencil,
     Search,
 } from "lucide-react"
-import type { ICreateEmployee, IEmployees } from "@/service/company.service"
 import { DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenu } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
 import { useForm } from "react-hook-form"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { useParams } from "react-router"
+import type { ICreateEmployee, IEmployees } from "@/types/company.interface"
 
 
 
@@ -89,7 +89,7 @@ export default function CompanyEmployeesPage() {
 
                                     <FormField
                                         control={form.control}
-                                        name="username"
+                                        name="email"
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>Имя пользователя</FormLabel>

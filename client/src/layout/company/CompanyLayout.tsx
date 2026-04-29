@@ -9,15 +9,12 @@ export default function CompanyLayout() {
         <WorkspaceProvider>
             <div className="min-h-screen bg-slate-50 flex">
 
-                {/* Sidebar */}
                 <CompanySidebar />
 
                 <div className="flex-1 flex flex-col">
 
-                    {/* Header */}
                     <CompanyHeader />
 
-                    {/* Page */}
                     <main className="flex-1 p-8">
                         <Outlet />
                     </main>

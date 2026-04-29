@@ -1,4 +1,3 @@
-import type { ICompany } from "@/service/company.service";
 export interface ICompanyUser {
     id: string;
     name: string;

@@ -3,20 +3,25 @@ import type { ICreateProperty, IUpdateProperty } from "@/types/property.interfac
 
 export const PropertyService = {
     async createProperty(companyId: number, data: ICreateProperty) {
-        const { data: responseData } = await axiosWithAuth.post(`company/${companyId}/property/create`, data);
+        const { data: responseData } = await axiosWithAuth.post(`company/${companyId}/properties`, data);
         return responseData;
     },
-    async getAllProperty(companyId: number) {
-        const { data } = await axiosWithAuth.get<ICreateProperty[]>(`company/${companyId}/properties`);
+    async getCompanyProperty(companyId: number) {
+        const { data } = await axiosWithAuth.get<ICreateProperty[]>(`company/${companyId}/properties`);//не сделано
         return data;
     },
-    async getPropertyById(id: number) {
-        const { data } = await axiosWithAuth.get<ICreateProperty>(`property/${id}`);
+
+    async getPropertyById(propertyId: number) {
+        const { data } = await axiosWithAuth.get<ICreateProperty>(`property/${propertyId}`);
         return data;
     },
-    async updateProperty(id: number, data: IUpdateProperty) {
-        const { data: responseData } = await axiosWithAuth.put(`property/${id}`, data);
+    async updateProperty(propertyId: number, data: IUpdateProperty) {
+        const { data: responseData } = await axiosWithAuth.put(`property/${propertyId}`, data);
         return responseData;
-    }
+    },
+    async deleteProperty(propertyId: number) {
+        const { data: responseData } = await axiosWithAuth.delete(`property/${propertyId}`);
+        return responseData;
+    },
 
 }

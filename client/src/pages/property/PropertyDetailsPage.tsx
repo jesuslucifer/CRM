@@ -15,8 +15,7 @@ export function PropertyDetailsPage() {
 
     const { propertyId } = useParams()
 
-    const { data: property, isLoading } =
-        useGetPropertyById(Number(propertyId))
+    const { data: property, isLoading } = useGetPropertyById(Number(propertyId))
 
     if (isLoading) return <div>Loading property...</div>
     if (!property) return <div>Property not found</div>

@@ -1,4 +1,4 @@
-import type { IClient } from "@/service/clients.service"
+import type { IClient } from "@/types/client.interface"
 
 interface Props {
     client: IClient

@@ -3,7 +3,7 @@ import DashboardPage from "./pages/dashboard/DashboardPage";
 import DealsListPage from "./pages/deals/DealsListPage";
 import DealsKanbanPage from "./pages/deals/DealsKanbanPage";
 import DealDetailsPage from "./pages/deals/DealsDetailsPage";
-import LeadsListPage from "./pages/leadsList/LeadsListPage";
+import LeadsListPage from "./pages/order/OrderPage";
 import SettingsPage from "./pages/settings/SettingsPage";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
@@ -14,7 +14,7 @@ import { ToastContainer } from 'react-toastify';
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import SideBar from "./layout/SideBar";
 import ProfilePage from "./pages/profile/ProfilePage";
-import ContactsListPage from "./pages/clients/ClientsListPage";
+import ContactsListPage from "./pages/clients/ClientsPage";
 
 
 export default function App() {

@@ -3,7 +3,7 @@ import { NavLink } from "react-router"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import type { ICreateProperty, IProperty } from "@/types/property.interface"
+import type { IProperty } from "@/types/property.interface"
 import EditPropertyDialog from "@/shared/forms/EditPropertyDialog"
 interface Props {
     property: IProperty

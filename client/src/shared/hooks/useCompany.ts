@@ -1,5 +1,6 @@
 import { useWorkspace } from "@/features/workspace/workspace.hook";
-import { CompanyService, type ICreateEmployee } from "@/service/company.service";
+import { CompanyService } from "@/service/company.service";
+import type { ICreateEmployee } from "@/types/company.interface";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
