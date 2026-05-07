@@ -40,8 +40,10 @@ public class OrderPropertyServiceImpl implements OrderPropertyService {
     @Override
     public OrderProperty update(Long propertyId, Long orderId, OrderPropertyUpdateRequest orderPropertyUpdateRequest) {
         OrderProperty orderProperty = getByOrderIdAndPropertyId(propertyId, orderId);
-
+        System.out.println("1");
         orderProperty.setStatus(orderPropertyUpdateRequest.getStatus());
+        orderProperty.setDateTime(orderPropertyUpdateRequest.getDateTime());
+        orderProperty.setDescription(orderPropertyUpdateRequest.getDescription());
 
         return save(orderProperty);
     }

@@ -29,3 +29,5 @@ databaseChangeLog:
       file: db/changelog/22.04.2026/add-column-agent-id-in-order.yaml
   - include:
       file: db/changelog/24.04.2026/create-table-property-images.yaml
+  - include:
+      file: db/changelog/07.05.2026/add-column-in-table-order-properties.yaml

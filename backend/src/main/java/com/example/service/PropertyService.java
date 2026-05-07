@@ -13,5 +13,6 @@ public interface PropertyService {
     Property update(Long id, PropertyCreateRequest property);
     Property getById(Long id);
     List<Property> importFromCsv(String fileName, Company company);
+    MultipartFile exportToCsv(List<Long> propertyIds, Company company);
     Property addImage(Long id, List<MultipartFile> files);
 }

@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
+
 @Entity
 @Data
 @Builder
@@ -29,4 +31,10 @@ public class OrderProperty {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private OrderPropertyStatus status;
+
+    @Column(name = "date_time")
+    private Instant dateTime;
+
+    @Column(name = "description")
+    private String description;
 }

@@ -13,12 +13,17 @@ import com.example.service.PropertyService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -164,6 +169,63 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     @Override
+    public MultipartFile exportToCsv(List<Long> propertyIds, Company company) {
+        List<Property> properties;
+
+        if (propertyIds == null || propertyIds.isEmpty()) {
+            properties = company.getProperties();
+        } else {
+            properties = propertyRepository.findAllByIdIn(propertyIds);
+        }
+
+        StringBuilder str = new StringBuilder();
+
+        // Добавляем заголовки CSV
+        str.append("cadastralNumber,title,description,propertyType,dealType,address,salePrice,area,rooms,totalFloors,yearBuilt,status,city,price,district,floor\n");
+
+        for (Property property : properties) {
+            str.append(escapeCsv(String.valueOf(property.getCadastralNumber()))).append(",")
+                    .append(escapeCsv(property.getTitle())).append(",")
+                    .append(escapeCsv(property.getDescription())).append(",")
+                    .append(escapeCsv(String.valueOf(property.getPropertyType()))).append(",")
+                    .append(escapeCsv(String.valueOf(property.getDealType()))).append(",")
+                    .append(escapeCsv(property.getAddress())).append(",")
+                    .append(property.getSalePrice()).append(",")
+                    .append(property.getArea()).append(",")
+                    .append(property.getRooms()).append(",")
+                    .append(property.getTotalFloors()).append(",")
+                    .append(property.getYearBuilt()).append(",")
+                    .append(escapeCsv(String.valueOf(property.getStatus()))).append(",")
+                    .append(escapeCsv(property.getCity())).append(",")
+                    .append(property.getPrice()).append(",")
+                    .append(escapeCsv(property.getDistrict())).append(",")
+                    .append(property.getFloor()).append("\n");
+        }
+
+        try {
+            byte[] content = str.toString().getBytes(StandardCharsets.UTF_8);
+
+            // Добавляем BOM для корректного отображения кириллицы в Excel
+            byte[] bom = {(byte) 0xEF, (byte) 0xBB, (byte) 0xBF};
+            byte[] contentWithBom = new byte[bom.length + content.length];
+            System.arraycopy(bom, 0, contentWithBom, 0, bom.length);
+            System.arraycopy(content, 0, contentWithBom, bom.length, content.length);
+
+            String filename = "properties_" + company.getName() + "_" +
+                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".csv";
+
+            return new MockMultipartFile(
+                    filename,
+                    filename,
+                    "text/csv",
+                    contentWithBom
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("Ошибка при создании CSV файла: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
     public Property addImage(Long id, List<MultipartFile> files) {
         Property property = getById(id);
 
@@ -285,5 +347,15 @@ public class PropertyServiceImpl implements PropertyService {
     private String generateUniqueFilename() {
         return UUID.randomUUID().toString() + "_" +
                 System.currentTimeMillis();
+    }
+
+    private String escapeCsv(String value) {
+        if (value == null) {
+            return "";
+        }
+        if (value.contains(",") || value.contains("\"") || value.contains("\n")) {
+            return "\"" + value.replace("\"", "\"\"") + "\"";
+        }
+        return value;
     }
 }

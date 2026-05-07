@@ -9,7 +9,9 @@ import com.example.service.CompanyService;
 import com.example.service.PropertyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -109,6 +111,34 @@ public class CompanyPropertyController {
                     log.warn("Не удалось удалить временный файл (NIO): {}", tempFile.toAbsolutePath(), e);
                 }
             }
+        }
+    }
+
+    @PostMapping("/export-to-csv")
+    public ResponseEntity<?> exportToCsv(
+            @PathVariable Long companyId,
+            @RequestBody List<Long> propertyIds) {
+        Company company = companyService.getById(companyId);
+
+        MultipartFile multipartFile = propertyService.exportToCsv(propertyIds, company);
+
+        try {
+            byte[] fileContent = multipartFile.getBytes();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType("text/csv"));
+            headers.setContentDispositionFormData("attachment", multipartFile.getOriginalFilename());
+            headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+
+            return ResponseEntity
+                    .ok()
+                    .headers(headers)
+                    .body(fileContent);
+
+        } catch (IOException e) {
+            return ResponseEntity
+                    .internalServerError()
+                    .body(("Ошибка при экспорте: " + e.getMessage()).getBytes()); //TODO EXCEPTION
         }
     }
 }
