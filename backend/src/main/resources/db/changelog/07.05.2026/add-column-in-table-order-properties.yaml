@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-column-in-table-order-properties.yaml
+      author: jesuslucifer
+      changes:
+        - addColumn:
+            tableName: order_properties
+            columns:
+              - column:
+                  name: date_time
+                  type: DATETIME
+              - column:
+                  name: description
+                  type: TEXT

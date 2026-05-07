@@ -1,14 +1,41 @@
 package com.example.exception;
 
 import com.example.model.dto.response.ErrorResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request) {
+
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+
+        System.err.println("Validation errors: " + errors);
+
+        return ResponseEntity.badRequest().body(errors);
+    }
 
     @ExceptionHandler(AuthenticationFailedException.class)
     public ResponseEntity<ErrorResponse> handleAuthenticationFailed() {
@@ -92,7 +119,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleUserNotFoundException() {
+    public ResponseEntity<ErrorResponse> handleUserNotFound() {
         ErrorResponse errorResponse = new ErrorResponse(
                 "Пользователь не найден",
                 HttpStatus.NOT_FOUND
@@ -118,7 +145,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorResponse, errorResponse.getStatus());
     }
 
-    @ExceptionHandler(EmployeeAlreadyExistsInCompanyException.class)
+    @ExceptionHandler(EmployeeAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleEmployeeAlreadyExistsInCompany() {
         ErrorResponse errorResponse = new ErrorResponse(
                 "Сотрудник уже находится в компании",
@@ -127,10 +154,64 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorResponse, errorResponse.getStatus());
     }
 
-    @ExceptionHandler(EmployeeNotFoundInCompanyException.class)
-    public ResponseEntity<ErrorResponse> handleEmployeeNotFoundInCompanyException() {
+    @ExceptionHandler(EmployeeNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleEmployeeNotFoundInCompany() {
         ErrorResponse errorResponse = new ErrorResponse(
                 "Сотрудника нет в компании",
+                HttpStatus.BAD_REQUEST
+        );
+        return new ResponseEntity<>(errorResponse, errorResponse.getStatus());
+    }
+
+    @ExceptionHandler(WrongPasswordException.class)
+    public ResponseEntity<ErrorResponse> handleWrongPassword() {
+        ErrorResponse errorResponse = new ErrorResponse(
+                "Неверный пароль",
+                HttpStatus.BAD_REQUEST
+        );
+        return new ResponseEntity<>(errorResponse, errorResponse.getStatus());
+    }
+
+    @ExceptionHandler(ClientAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleClientAlreadyExists() {
+        ErrorResponse errorResponse = new ErrorResponse(
+                "Клиент с такими данными уже существует",
+                HttpStatus.BAD_REQUEST
+        );
+        return new ResponseEntity<>(errorResponse, errorResponse.getStatus());
+    }
+
+    @ExceptionHandler(ClientNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleClientNotFound() {
+        ErrorResponse errorResponse = new ErrorResponse(
+                "Клиент не найден",
+                HttpStatus.BAD_REQUEST
+        );
+        return new ResponseEntity<>(errorResponse, errorResponse.getStatus());
+    }
+
+    @ExceptionHandler(PhoneAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handlePhoneAlreadyExists() {
+        ErrorResponse errorResponse = new ErrorResponse(
+                "Телефон уже занят",
+                HttpStatus.BAD_REQUEST
+        );
+        return new ResponseEntity<>(errorResponse, errorResponse.getStatus());
+    }
+
+    @ExceptionHandler(PropertyAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handlePropertyAlreadyExists() {
+        ErrorResponse errorResponse = new ErrorResponse(
+                "Недвижимость уже существует",
+                HttpStatus.BAD_REQUEST
+        );
+        return new ResponseEntity<>(errorResponse, errorResponse.getStatus());
+    }
+
+    @ExceptionHandler(PropertyNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handlePropertyNotFound() {
+        ErrorResponse errorResponse = new ErrorResponse(
+                "Недвижимость не найдена",
                 HttpStatus.BAD_REQUEST
         );
         return new ResponseEntity<>(errorResponse, errorResponse.getStatus());

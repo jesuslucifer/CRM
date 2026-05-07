@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-orders.yaml
+      author: jesuslucifer
+      changes:
+        - createTable:
+            tableName: orders
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: company_id
+                  type: BIGINT
+              - column:
+                  name: client_id
+                  type: BIGINT
+              - column:
+                  name: city
+                  type: VARCHAR(100)
+              - column:
+                  name: property_type
+                  type: VARCHAR(50)
+              - column:
+                  name: deal_type
+                  type: VARCHAR(50)
+              - column:
+                  name: description
+                  type: TEXT

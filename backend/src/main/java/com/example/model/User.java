@@ -1,12 +1,16 @@
 package com.example.model;
 
+import com.example.model.enums.EmployeeRole;
+import com.example.model.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Data
@@ -44,8 +48,47 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Token> tokens;
 
-    @OneToMany(mappedBy = "userCreator", fetch = FetchType.EAGER)
-    private List<Company> companies;
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<CompanyEmployee> companyEmployees = new ArrayList<>();
+
+    @OneToMany(mappedBy = "agent", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<Deal> deals = new ArrayList<>();
+
+    @OneToMany(mappedBy = "agent", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<Order> orders = new ArrayList<>();
+
+    public void addDeal(Deal deal) {
+        deals.add(deal);
+    }
+
+    public void removeDeal(Deal deal) {
+        deals.remove(deal);
+    }
+
+    public void addOrder(Order order) {
+        orders.add(order);
+    }
+
+    public void removeOrder(Order order) {
+        orders.remove(order);
+    }
+
+    public List<Company> getCompanies() {
+        return companyEmployees.stream()
+                .map(CompanyEmployee::getCompany)
+                .collect(Collectors.toList());
+    }
+
+    public EmployeeRole getRoleInCompany(Long companyId) {
+        return companyEmployees.stream()
+                .filter(ce -> ce.getCompany().getId().equals(companyId))
+                .map(CompanyEmployee::getRole)
+                .findFirst()
+                .orElse(null);
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

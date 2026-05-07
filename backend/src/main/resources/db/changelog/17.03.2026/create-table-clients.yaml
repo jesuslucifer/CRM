@@ -1,0 +1,38 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-clients.yaml
+      author: jesuslucifer
+      changes:
+        - createTable:
+            tableName: clients
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: company_id
+                  type: BIGINT
+              - column:
+                  name: first_name
+                  type: VARCHAR(100)
+              - column:
+                  name: last_name
+                  type: VARCHAR(100)
+              - column:
+                  name: phone
+                  type: VARCHAR(20)
+              - column:
+                  name: email
+                  type: VARCHAR(50)
+              - column:
+                  name: client_type
+                  type: VARCHAR(50)
+              - column:
+                  name: source
+                  type: VARCHAR(50)
+              - column:
+                  name: notes
+                  type: TEXT

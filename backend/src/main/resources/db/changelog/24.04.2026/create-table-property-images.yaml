@@ -1,0 +1,41 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-property-images.yaml
+      author: jesuslucifer
+      changes:
+        - createTable:
+            tableName: property-images
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: property_id
+                  type: BIGINT
+              - column:
+                  name: file_path
+                  type: NVARCHAR(128)
+              - column:
+                  name: original-filename
+                  type: NVARCHAR(128)
+              - column:
+                  name: stored-filename
+                  type: NVARCHAR(128)
+              - column:
+                  name: file-size
+                  type: BIGINT
+              - column:
+                  name: content-type
+                  type: NVARCHAR(64)
+              - column:
+                  name: sort-order
+                  type: BIGINT
+              - column:
+                  name: is-main
+                  type: BOOLEAN
+              - column:
+                  name: created-at
+                  type: TIMESTAMP
